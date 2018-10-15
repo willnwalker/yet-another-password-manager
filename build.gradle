@@ -7,11 +7,16 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0-rc03'
+        classpath 'com.android.tools.build:gradle:3.2.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+
+        //Shaurya - Step 1 Realm.io- Is this okay to write here?
+        // We are just following the instructions but we also see your note.
+        //So that is why we are confused.
+        classpath "io.realm:realm-gradle-plugin:5.7.0"
     }
 }
 
