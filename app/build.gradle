@@ -23,11 +23,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    //Shaurya/Theo - Step 3  - Enabling Realm Mobile Platform - Realm.io
-    //Do you have to add in library dependencies
-    realm {
-        syncEnabled = true;
-    }
 }
 
 dependencies {
