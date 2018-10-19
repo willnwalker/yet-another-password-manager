@@ -6,7 +6,15 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    
+    <string name="no_passwords_message">Looks like you don\'t have any saved passwords! Click the button in the bottom right hand corner to add a new password.</string>
+    <string name="password_view_service_string">Enter/Change the service\'s name/website and password in the boxes below:</string>
+    <string name="password_view_service_hint">Service name/website</string>
+    <string name="password_view_username">Username</string>
+    <string name="password_view_password">Password</string>
+    <string name="password_view_confirm_password">Confirm Password</string>
+    <string name="password_view_url">URL</string>
+    <string name="password_view_show_password">Show Password</string>
+    <string name="password_view_save">Save</string>
+    <string name="password_view_notes">Notes</string>
 </resources>
