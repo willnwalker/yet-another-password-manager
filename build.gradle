@@ -15,6 +15,10 @@ buildscript {
 
         //Shaurya/Teddy - Step 1 Realm.io
         classpath "io.realm:realm-gradle-plugin:5.7.0"
+
+        // Kyle - Safe args for navigation
+        classpath "android.arch.navigation:navigation-safe-args-gradle-plugin:1.0.0-alpha06"
+
     }
 }
 
