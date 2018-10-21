@@ -10,11 +10,13 @@
         android:name="xyz.willnwalker.yetanotherpasswordmanager.MainActivity"
         android:label="content_main"
         tools:layout="@layout/content_main" />
+
     <fragment
         android:id="@+id/passwordListFragment"
         android:name="xyz.willnwalker.yetanotherpasswordmanager.PasswordListFragment"
         android:label="fragment_password_list"
         tools:layout="@layout/fragment_password_list" />
+
     <fragment
         android:id="@+id/passwordViewFragment"
         android:name="xyz.willnwalker.yetanotherpasswordmanager.PasswordViewFragment"
