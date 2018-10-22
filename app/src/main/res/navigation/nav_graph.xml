@@ -15,7 +15,11 @@
         android:id="@+id/passwordListFragment"
         android:name="xyz.willnwalker.yetanotherpasswordmanager.PasswordListFragment"
         android:label="fragment_password_list"
-        tools:layout="@layout/fragment_password_list" />
+        tools:layout="@layout/fragment_password_list" >
+        <action
+            android:id="@+id/action_new_password"
+            app:destination="@id/passwordViewFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/passwordViewFragment"
