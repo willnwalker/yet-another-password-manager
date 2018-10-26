@@ -1,12 +1,17 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import io.realm.Realm
+import io.realm.RealmConfiguration
+import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.fragment_password_list.*
 
 /**
@@ -25,6 +30,8 @@ class PasswordListFragment : Fragment() {
 
     private var mListener: OnFragmentInteractionListener? = null
 
+    private lateinit var contextConfirmed : Context
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
@@ -42,8 +49,19 @@ class PasswordListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fab.setOnClickListener { NavHostFragment.findNavController(this).navigate(R.id.action_new_password) }
+        fab.setOnClickListener { findNavController(it).navigate(R.id.action_new_password) }
 
+        var config: RealmConfiguration = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build()
+        var realm = Realm.getInstance(config)
+        var entries = realm.where<Entry>().findAllAsync()
+        passwordList.setAdapter(PasswordListAdapter(contextConfirmed, entries, true, false, ""))
+
+    }
+
+    // Need this because context doesn't exist until fragment attached to navigation controller
+    override fun onAttach(_context: Context){
+        super.onAttach(context)
+        contextConfirmed = _context
     }
 
     // TODO: Rename method, update argument and hook method into UI event

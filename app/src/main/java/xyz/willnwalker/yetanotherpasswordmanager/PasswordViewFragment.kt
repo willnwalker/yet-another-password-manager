@@ -1,17 +1,16 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.Navigation.findNavController
+
 import io.realm.Realm
-import io.realm.kotlin.createObject
+import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.fragment_password_view.*
-import java.util.*
 
 
 /**
@@ -30,7 +29,8 @@ class PasswordViewFragment : Fragment() {
 
     private var mListener: OnFragmentInteractionListener? = null
 
-    private lateinit var realm: Realm
+    private lateinit var config: RealmConfiguration
+    private lateinit var realm : Realm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,10 +49,11 @@ class PasswordViewFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        config = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build()
+        realm = Realm.getInstance(config)
 
         // Kyle - Save button OnClickListener
         button_save.setOnClickListener {
-            realm = Realm.getDefaultInstance()
             val entry = Entry()
             entry.title = serviceName.text.toString()
             entry.userName = serviceUsername.text.toString()
@@ -63,7 +64,7 @@ class PasswordViewFragment : Fragment() {
             realm.beginTransaction()
             realm.copyToRealm(entry)
             realm.commitTransaction()
-            findNavController().navigateUp()
+            findNavController(it).navigateUp()
         }
     }
 

@@ -29,7 +29,12 @@
         android:id="@+id/passwordViewFragment"
         android:name="xyz.willnwalker.yetanotherpasswordmanager.PasswordViewFragment"
         android:label="fragment_password_view"
-        tools:layout="@layout/fragment_password_view" />
+        tools:layout="@layout/fragment_password_view" >
+        <argument
+            android:name="uuid"
+            android:defaultValue="new_uuid"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/login"
         android:name="xyz.willnwalker.yetanotherpasswordmanager.login"
