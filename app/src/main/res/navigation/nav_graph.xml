@@ -19,7 +19,7 @@
         <action
             android:id="@+id/action_new_password"
             app:destination="@id/passwordViewFragment"
-            app:enterAnim="@anim/slide_in_right"
+            app:enterAnim="@anim/nav_default_pop_enter_anim"
             app:exitAnim="@anim/nav_default_pop_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
