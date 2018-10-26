@@ -33,10 +33,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
-
-        // Initialize Realm (just once per application)
-        Realm.init(applicationContext)
-
     }
 
     override fun onBackPressed() {

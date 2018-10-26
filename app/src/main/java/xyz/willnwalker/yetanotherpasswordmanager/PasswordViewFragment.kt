@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import io.realm.Realm
 import io.realm.kotlin.createObject
 import kotlinx.android.synthetic.main.fragment_password_view.*
@@ -37,7 +38,7 @@ class PasswordViewFragment : Fragment() {
             mParam1 = arguments!!.getString(ARG_PARAM1)
             mParam2 = arguments!!.getString(ARG_PARAM2)
         }
-        realm = Realm.getDefaultInstance()
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +52,8 @@ class PasswordViewFragment : Fragment() {
 
         // Kyle - Save button OnClickListener
         button_save.setOnClickListener {
-            var entry = Entry(UUID.randomUUID().toString())
+            realm = Realm.getDefaultInstance()
+            val entry = Entry()
             entry.title = serviceName.text.toString()
             entry.userName = serviceUsername.text.toString()
             entry.password = passwordText.text.toString()
@@ -61,6 +63,7 @@ class PasswordViewFragment : Fragment() {
             realm.beginTransaction()
             realm.copyToRealm(entry)
             realm.commitTransaction()
+            findNavController().navigateUp()
         }
     }
 
