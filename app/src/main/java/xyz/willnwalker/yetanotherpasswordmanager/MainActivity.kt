@@ -18,6 +18,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // initialize Realm
+        Realm.init(applicationContext)
+
         setContentView(R.layout.activity_main)
         //setContentView(R.layout.fragment_password_list)
         setSupportActionBar(toolbar)
