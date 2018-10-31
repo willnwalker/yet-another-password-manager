@@ -11,6 +11,8 @@ import androidx.navigation.fragment.findNavController
 import io.realm.Realm
 import io.realm.kotlin.createObject
 import kotlinx.android.synthetic.main.fragment_password_view.*
+import java.security.NoSuchAlgorithmException
+import java.security.SecureRandom
 import java.util.*
 
 
@@ -84,6 +86,41 @@ class PasswordViewFragment : Fragment() {
     //                    + " must implement OnFragmentInteractionListener");
     //        }
     //    }
+
+    fun genPassword(length: Int, specialChars: Boolean): String {
+        val range: Int
+        var pass = ""
+        if (specialChars) {
+            range = 94
+        } else {
+            range = 62
+        }
+        for (i in 0 until length) {
+            try {
+                val secRand = SecureRandom.getInstance("SHA1PRNG")
+                if (specialChars)
+                    pass += (secRand.nextInt(range) + 33) as Char
+                else
+                    pass += genCharacter(secRand.nextInt(range))
+            } catch (e: NoSuchAlgorithmException) {
+                //Implement some type of "Try again" pop-up message
+            }
+        }
+        return pass
+    }
+
+    fun genCharacter(num: Int): Char {
+        var num = num
+        if (num <= 9)
+            num += 48
+        else if (num <= 35)
+            num += 55
+        else if (num <= 62)
+            num += 61
+        else
+            println("secRand returned out of range $num")
+        return num.toChar()
+    }
 
     override fun onDetach() {
         super.onDetach()
