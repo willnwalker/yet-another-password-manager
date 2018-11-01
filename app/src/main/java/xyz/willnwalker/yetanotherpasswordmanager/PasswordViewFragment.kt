@@ -14,6 +14,10 @@ import kotlinx.android.synthetic.main.fragment_password_view.*
 import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.util.*
+import android.widget.TextView
+import android.R.drawable.edit_text
+import android.widget.EditText
+import kotlinx.android.synthetic.main.content_main.*
 
 
 /**
@@ -67,6 +71,12 @@ class PasswordViewFragment : Fragment() {
             realm.commitTransaction()
             findNavController().navigateUp()
         }
+
+        button_genpassword.setOnClickListener{
+            val pass = genPassword(10, true)
+            passwordText.setText(pass)
+            passwordText2.setText(pass)
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -99,7 +109,7 @@ class PasswordViewFragment : Fragment() {
             try {
                 val secRand = SecureRandom.getInstance("SHA1PRNG")
                 if (specialChars)
-                    pass += (secRand.nextInt(range) + 33) as Char
+                    pass += (secRand.nextInt(range) + 33).toChar()
                 else
                     pass += genCharacter(secRand.nextInt(range))
             } catch (e: NoSuchAlgorithmException) {
