@@ -20,6 +20,7 @@ import android.widget.TextView
 import android.R.drawable.edit_text
 import android.widget.EditText
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.fragment_password_view.view.*
 
 
 /**
@@ -78,8 +79,8 @@ class PasswordViewFragment : Fragment() {
 
         button_genpassword.setOnClickListener{
             val pass = genPassword(10, true)
-            passwordText.setText(pass)
-            passwordText2.setText(pass)
+            passwordTextField.setText(pass)
+            passwordTextField2.setText(pass)
         }
     }
 

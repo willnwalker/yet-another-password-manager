@@ -31,7 +31,7 @@ android {
 //}
 
     dependencies {
-        def nav_version = "1.0.0-alpha06"
+        def nav_version = "1.0.0-alpha07"
 
         implementation "android.arch.navigation:navigation-fragment-ktx:$nav_version"
         // use -ktx for Kotlin
@@ -47,5 +47,7 @@ android {
         androidTestImplementation 'com.android.support.test:runner:1.0.2'
         androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
         implementation 'com.github.thorbenprimke:realm-recyclerview:0.9.25'
+        //implementation 'com.afollestad.material-dialogs:core:2.0.0-beta4'
+
     }
 }
