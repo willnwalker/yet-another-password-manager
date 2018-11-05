@@ -60,18 +60,7 @@ class PasswordListAdapter(
         holder.mTextView.text = data[position]!!.title
         //set list item onclicklistener here
         holder.container.setOnClickListener {
-            /*val i = Intent(applicationContext, NewPasswordActivity::class.java)
-            val b = Bundle()
-            val e = data[position]
-            b.putLong("entryID", e!!.uuid)
-            b.putString("service", e.title)
-            b.putString("password", e.password)
-            i.putExtras(b)
-            startActivityForResult(i, oldPassword)*/
-            /*val bundle = Bundle()
-            bundle.putString("uuid",data[position]!!.uuid)*/
             val entry = data[position] as Entry
-            //val action = PasswordListFragmentDirections.ActionNewPassword(entry.uuid)
             PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id)
             findNavController(it).navigate(R.id.action_new_password)//, bundle)
         }
