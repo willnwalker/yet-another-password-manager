@@ -1,7 +1,6 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
 import android.content.Context
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,11 +8,6 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.navigation.Navigation.findNavController
 import io.realm.*
-import io.realm.kotlin.delete
-import io.realm.kotlin.deleteFromRealm
-import xyz.willnwalker.yetanotherpasswordmanager.R.id.action_new_password
-
-import android.support.v7.widget.RecyclerView
 
 class PasswordListAdapter(
         context: Context,
@@ -38,10 +32,10 @@ class PasswordListAdapter(
      * each data item is just a string in this case
      */
     inner class ViewHolder(var container: FrameLayout) : RealmViewHolder(container) {
-        var mTextView: TextView = container.findViewById<View>(R.id.textView) as TextView
+        var mTextView: TextView = container.findViewById<View>(R.id.title) as TextView
 
         init {
-            mTextView = container.findViewById<View>(R.id.textView) as TextView
+            mTextView = container.findViewById<View>(R.id.title) as TextView
         }
     }
 

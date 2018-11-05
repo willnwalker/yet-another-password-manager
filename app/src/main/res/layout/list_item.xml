@@ -5,9 +5,8 @@
     android:foreground="?android:attr/selectableItemBackground"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!--TODO: rename to Title-->
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:layout_gravity="top"
@@ -22,6 +21,5 @@
         tools:text="Hero text"
         />
 
-    <!--TODO: Add TextView to include website name-->
 
 </FrameLayout>
