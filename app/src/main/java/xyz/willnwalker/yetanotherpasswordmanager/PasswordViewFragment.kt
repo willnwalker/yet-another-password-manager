@@ -3,9 +3,11 @@ package xyz.willnwalker.yetanotherpasswordmanager
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import androidx.navigation.Navigation.findNavController
 
 import io.realm.Realm
@@ -64,7 +66,7 @@ class PasswordViewFragment : Fragment() {
             val entry = Entry()
             entry.title = serviceName.text.toString()
             entry.userName = serviceUsername.text.toString()
-            entry.password = passwordText.text.toString()
+            entry.password = passwordText.toString()
             entry.url = url.text.toString()
             entry.notes = notes.text.toString()
 
@@ -177,4 +179,20 @@ class PasswordViewFragment : Fragment() {
             return fragment
         }
     }
+
+/*    fun onCheckBoxClicked(view: View){
+        if(view is CheckBox){
+            val checked: Boolean = view.isChecked
+            if(checked){
+                // TODO: figure out setTransformationMethod in Kotlin
+
+                // passwordText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+
+                passwordText.inputType = InputType.TYPE_CLASS_TEXT
+            }
+            else{
+                passwordText.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
+            }
+        }
+    }*/
 }// Required empty public constructor
