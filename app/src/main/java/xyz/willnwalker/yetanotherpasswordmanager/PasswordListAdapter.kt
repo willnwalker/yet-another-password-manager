@@ -13,6 +13,8 @@ import io.realm.kotlin.delete
 import io.realm.kotlin.deleteFromRealm
 import xyz.willnwalker.yetanotherpasswordmanager.R.id.action_new_password
 
+import android.support.v7.widget.RecyclerView
+
 class PasswordListAdapter(
         context: Context,
         private val data: RealmResults<Entry>,
@@ -28,11 +30,13 @@ class PasswordListAdapter(
     private val config: RealmConfiguration = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build()
     private val realm = Realm.getInstance(config)
 
-    // Provide a suitable constructor (depends on the kind of dataset)
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
-    // each data item is just a string in this case
+    /**
+     * Provide a suitable constructor (depends on the kind of dataset)
+     * Provide a reference to the views for each data item
+     * Complex data items may need more than one view per item, and
+     * you provide access to all the views for a data item in a view holder
+     * each data item is just a string in this case
+     */
     inner class ViewHolder(var container: FrameLayout) : RealmViewHolder(container) {
         var mTextView: TextView = container.findViewById<View>(R.id.textView) as TextView
 

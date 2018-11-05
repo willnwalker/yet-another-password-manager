@@ -91,17 +91,6 @@ class PasswordViewFragment : Fragment() {
         }
     }
 
-    //    @Override
-    //    public void onAttach(Context context) {
-    //        super.onAttach(context);
-    //        if (context instanceof OnFragmentInteractionListener) {
-    //            mListener = (OnFragmentInteractionListener) context;
-    //        } else {
-    //            throw new RuntimeException(context.toString()
-    //                    + " must implement OnFragmentInteractionListener");
-    //        }
-    //    }
-
     fun genPassword(length: Int, specialChars: Boolean): String {
         val range: Int
         var pass = ""
@@ -126,14 +115,13 @@ class PasswordViewFragment : Fragment() {
 
     fun genCharacter(num: Int): Char {
         var num = num
-        if (num <= 9)
-            num += 48
-        else if (num <= 35)
-            num += 55
-        else if (num <= 62)
-            num += 61
-        else
-            println("secRand returned out of range $num")
+        // when is like switch in java
+        when {
+            num <= 9 -> num += 48
+            num <= 35 -> num += 55
+            num <= 62 -> num += 61
+            else -> println("secRand returned out of range $num")
+        }
         return num.toChar()
     }
 
@@ -180,20 +168,4 @@ class PasswordViewFragment : Fragment() {
             return fragment
         }
     }
-
-/*    fun onCheckBoxClicked(view: View){
-        if(view is CheckBox){
-            val checked: Boolean = view.isChecked
-            if(checked){
-                // TODO: figure out setTransformationMethod in Kotlin
-
-                // passwordText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-
-                passwordText.inputType = InputType.TYPE_CLASS_TEXT
-            }
-            else{
-                passwordText.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
-            }
-        }
-    }*/
 }// Required empty public constructor

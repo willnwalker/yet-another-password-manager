@@ -2,8 +2,10 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:foreground="?android:attr/selectableItemBackground"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!--TODO: rename to Title-->
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
@@ -14,8 +16,12 @@
         android:paddingRight="@dimen/spacing_large"
         android:paddingTop="@dimen/spacing_large"
         android:paddingBottom="@dimen/spacing_large"
-        android:textSize="16sp"
+        android:textSize="24sp"
+        android:divider="?android:dividerHorizontal"
+        android:showDividers="middle"
         tools:text="Hero text"
         />
+
+    <!--TODO: Add TextView to include website name-->
 
 </FrameLayout>

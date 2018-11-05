@@ -4,6 +4,9 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +15,9 @@ import androidx.navigation.fragment.NavHostFragment
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.kotlin.where
+import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.fragment_password_list.*
+
 
 /**
  * A simple [Fragment] subclass.
@@ -31,6 +36,9 @@ class PasswordListFragment : Fragment() {
     private var mListener: OnFragmentInteractionListener? = null
 
     private lateinit var contextConfirmed : Context
+
+    // Kyle: initialize linearLayoutManager
+    private lateinit var linearLayoutManager: LinearLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +59,11 @@ class PasswordListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         fab.setOnClickListener { findNavController(it).navigate(R.id.action_new_password) }
 
+        linearLayoutManager = LinearLayoutManager(activity)
+
+        // Kyle: adds a horizontal line separator between each item
+        passwordList.addItemDecoration(PasswordListItemDecoration(contextConfirmed, 40, 40))
+
         var config: RealmConfiguration = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build()
         var realm = Realm.getInstance(config)
         var entries = realm.where<Entry>().findAllAsync()
@@ -70,17 +83,6 @@ class PasswordListFragment : Fragment() {
             mListener!!.onFragmentInteraction(uri)
         }
     }
-
-    /*    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }*/
 
     override fun onDetach() {
         super.onDetach()
