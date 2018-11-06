@@ -67,7 +67,7 @@ class PasswordViewFragment : Fragment() {
             val entry = Entry()
             entry.title = serviceName.text.toString()
             entry.userName = serviceUsername.text.toString()
-            entry.password = passwordText.toString()
+            entry.password = passwordTextField.text.toString()
             entry.url = url.text.toString()
             entry.notes = notes.text.toString()
 

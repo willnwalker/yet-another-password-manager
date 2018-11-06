@@ -6,8 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.navigation.Navigation.findNavController
+import com.afollestad.materialdialogs.DialogAction
 import io.realm.*
+import com.afollestad.materialdialogs.MaterialDialog
+import io.realm.kotlin.deleteFromRealm
+
 
 class PasswordListAdapter(
         context: Context,
@@ -55,10 +60,36 @@ class PasswordListAdapter(
         //set list item onclicklistener here
         holder.container.setOnClickListener {
             val entry = data[position] as Entry
-            PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id)
-            findNavController(it).navigate(R.id.action_new_password)//, bundle)
+//            PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id)
+//            findNavController(it).navigate(R.id.action_new_password)
+            MaterialDialog.Builder(context)
+                    .title(entry.title)
+                    .content("Username: " + entry.userName
+                            + "\n" + "Password: " + entry.password
+                            + "\n"  + "Notes: " + entry.notes
+                            + "\n"  + "Notes: " + entry.url)
+                    .positiveText("Edit")
+//                    .onPositive({dialog: MaterialDialog, which: DialogAction ->
+//                        PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id);
+//                        findNavController(it).navigate(R.id.action_new_password)
+//
+//                    })
+                    .negativeText("Delete")
+                    .onNegative { dialog, which ->
+                        MaterialDialog.Builder(context)
+                                .title("Are you sure you want to delete this entry?")
+                                .positiveText("Yes")
+                                .onPositive({dialog: MaterialDialog, which: DialogAction ->
+                                    realm.beginTransaction()
+                                    entry.deleteFromRealm()
+                                    realm.commitTransaction()
+                                    Toast.makeText(context, "Password Deleted", Toast.LENGTH_SHORT)
+                                })
+                                .negativeText("No")
+                                .show()
+                    }
+                    .show()
         }
-
     }
 
     // Return the size of your dataset (invoked by the layout manager)
