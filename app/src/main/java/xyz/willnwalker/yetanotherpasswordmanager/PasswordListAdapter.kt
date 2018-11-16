@@ -69,11 +69,10 @@ class PasswordListAdapter(
                             + "\n"  + "Notes: " + entry.notes
                             + "\n"  + "Notes: " + entry.url)
                     .positiveText("Edit")
-//                    .onPositive({dialog: MaterialDialog, which: DialogAction ->
-//                        PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id);
-//                        findNavController(it).navigate(R.id.action_new_password)
-//
-//                    })
+                    .onPositive({dialog: MaterialDialog, which: DialogAction ->
+                        PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id);
+                        findNavController(it).navigate(R.id.action_new_password)
+                    })
                     .negativeText("Delete")
                     .onNegative { dialog, which ->
                         MaterialDialog.Builder(context)
