@@ -21,7 +21,6 @@ import android.R.drawable.edit_text
 import android.widget.EditText
 import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.kotlin.where
-import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.fragment_password_view.view.*
 
 
