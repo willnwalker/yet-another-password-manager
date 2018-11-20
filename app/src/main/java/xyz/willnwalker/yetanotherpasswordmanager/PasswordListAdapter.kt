@@ -1,8 +1,10 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +12,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
 import com.afollestad.materialdialogs.DialogAction
 import io.realm.*
 import com.afollestad.materialdialogs.MaterialDialog
@@ -65,24 +68,27 @@ class PasswordListAdapter(
 //            findNavController(it).navigate(R.id.action_new_password)
             MaterialDialog.Builder(context)
                     .title(entry.title)
+                    .autoDismiss(false)
                     .content("Username: " + entry.userName
                             + "\n" + "Password: " + entry.password
                             + "\n"  + "Notes: " + entry.notes
                             + "\n"  + "URL: " + entry.url)
                     .positiveText("Edit")
-                    .onPositive{dialog: MaterialDialog, which: DialogAction ->
+                    .onPositive{ dialog, _ ->
 //                        PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id);
 //                        findNavController(it).navigate(R.id.action_new_password)
-                        var bundle = Bundle()
+                        dialog.dismiss()
+                        val bundle = Bundle()
                         bundle.putString("uuid", entry.id)
                         findNavController(it).navigate(R.id.action_new_password, bundle)
                     }
                     .negativeText("Delete")
-                    .onNegative { dialog, which ->
+                    .onNegative { dialog, _ ->
                         MaterialDialog.Builder(context)
                                 .title("Are you sure you want to delete this entry?")
                                 .positiveText("Yes")
-                                .onPositive{dialog: MaterialDialog, which: DialogAction ->
+                                .onPositive{_, _ ->
+                                    dialog.dismiss()
                                     realm.beginTransaction()
                                     entry.deleteFromRealm()
                                     realm.commitTransaction()

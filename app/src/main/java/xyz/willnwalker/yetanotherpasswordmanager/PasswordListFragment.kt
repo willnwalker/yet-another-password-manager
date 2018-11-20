@@ -54,7 +54,7 @@ class PasswordListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fab.setOnClickListener {
-            var bundle = Bundle()
+            val bundle = Bundle()
             bundle.putString("uuid", "NEW_PASSWORD")
             findNavController(it).navigate(R.id.action_new_password, bundle)
         }

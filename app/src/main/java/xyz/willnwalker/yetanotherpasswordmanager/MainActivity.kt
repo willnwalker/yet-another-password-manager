@@ -32,14 +32,6 @@ class MainActivity : AppCompatActivity(){//, NavigationView.OnNavigationItemSele
 //        nav_view.setNavigationItemSelectedListener(this)
     }
 
-    override fun onBackPressed() {
-//        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-//            drawer_layout.closeDrawer(GravityCompat.START)
-//        } else {
-//            super.onBackPressed()
-//        }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
