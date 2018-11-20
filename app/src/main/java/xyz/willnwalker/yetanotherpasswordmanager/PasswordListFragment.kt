@@ -4,18 +4,14 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.kotlin.where
-import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.fragment_password_list.*
 
 
@@ -57,7 +53,11 @@ class PasswordListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fab.setOnClickListener { findNavController(it).navigate(R.id.action_new_password) }
+        fab.setOnClickListener {
+            var bundle = Bundle()
+            bundle.putString("uuid", "NEW_PASSWORD")
+            findNavController(it).navigate(R.id.action_new_password, bundle)
+        }
 
         linearLayoutManager = LinearLayoutManager(activity)
 

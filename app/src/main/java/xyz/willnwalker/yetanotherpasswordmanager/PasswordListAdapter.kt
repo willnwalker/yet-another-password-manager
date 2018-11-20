@@ -1,6 +1,7 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
 import android.content.Context
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,6 @@ import com.afollestad.materialdialogs.DialogAction
 import io.realm.*
 import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.kotlin.deleteFromRealm
-
 
 class PasswordListAdapter(
         context: Context,
@@ -69,21 +69,24 @@ class PasswordListAdapter(
                             + "\n"  + "Notes: " + entry.notes
                             + "\n"  + "Notes: " + entry.url)
                     .positiveText("Edit")
-                    .onPositive({dialog: MaterialDialog, which: DialogAction ->
-                        PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id);
-                        findNavController(it).navigate(R.id.action_new_password)
-                    })
+                    .onPositive{dialog: MaterialDialog, which: DialogAction ->
+//                        PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id);
+//                        findNavController(it).navigate(R.id.action_new_password)
+                        var bundle = Bundle()
+                        bundle.putString("uuid", entry.id)
+                        findNavController(it).navigate(R.id.action_new_password, bundle)
+                    }
                     .negativeText("Delete")
                     .onNegative { dialog, which ->
                         MaterialDialog.Builder(context)
                                 .title("Are you sure you want to delete this entry?")
                                 .positiveText("Yes")
-                                .onPositive({dialog: MaterialDialog, which: DialogAction ->
+                                .onPositive{dialog: MaterialDialog, which: DialogAction ->
                                     realm.beginTransaction()
                                     entry.deleteFromRealm()
                                     realm.commitTransaction()
-                                    Toast.makeText(context, "Password Deleted", Toast.LENGTH_SHORT)
-                                })
+                                    Toast.makeText(context, "Password Deleted", Toast.LENGTH_SHORT).show()
+                                }
                                 .negativeText("No")
                                 .show()
                     }

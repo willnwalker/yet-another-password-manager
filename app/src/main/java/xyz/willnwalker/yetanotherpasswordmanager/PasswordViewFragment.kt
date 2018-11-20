@@ -19,6 +19,7 @@ import java.util.*
 import android.widget.TextView
 import android.R.drawable.edit_text
 import android.widget.EditText
+import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.fragment_password_view.view.*
 
@@ -61,21 +62,47 @@ class PasswordViewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         config = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build()
         realm = Realm.getInstance(config)
+        val uuid = arguments!!.getString("uuid")
 
-        // Kyle - Save button OnClickListener
-        button_save.setOnClickListener {
-            val entry = Entry()
-            entry.title = serviceName.text.toString()
-            entry.userName = serviceUsername.text.toString()
-            entry.password = passwordTextField.text.toString()
-            entry.url = url.text.toString()
-            entry.notes = notes.text.toString()
+        if(uuid != "NEW_PASSWORD"){
+            var entry = realm.where<Entry>().equalTo("id",uuid).findFirst()
+            serviceName.setText(entry!!.title)
+            serviceUsername.setText(entry.userName)
+            passwordTextField.setText(entry.password)
+            passwordTextField2.setText(entry.password)
+            url.setText(entry.url)
+            notes.setText(entry.notes)
+            button_save.setOnClickListener {
+                entry.title = serviceName.text.toString()
+                entry.userName = serviceUsername.text.toString()
+                entry.password = passwordTextField.text.toString()
+                entry.url = url.text.toString()
+                entry.notes = notes.text.toString()
 
-            realm.beginTransaction()
-            realm.copyToRealm(entry)
-            realm.commitTransaction()
-            findNavController(it).navigateUp()
+                realm.beginTransaction()
+                realm.copyToRealm(entry)
+                realm.commitTransaction()
+                findNavController(it).navigateUp()
+            }
         }
+        else{
+            var entry = Entry()
+            // Kyle - Save button OnClickListener
+            button_save.setOnClickListener {
+                entry.title = serviceName.text.toString()
+                entry.userName = serviceUsername.text.toString()
+                entry.password = passwordTextField.text.toString()
+                entry.url = url.text.toString()
+                entry.notes = notes.text.toString()
+
+                realm.beginTransaction()
+                realm.copyToRealm(entry)
+                realm.commitTransaction()
+                findNavController(it).navigateUp()
+            }
+        }
+
+
 
         button_genpassword.setOnClickListener{
             val pass = genPassword(10, true)
