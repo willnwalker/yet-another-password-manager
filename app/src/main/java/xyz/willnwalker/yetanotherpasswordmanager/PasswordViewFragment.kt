@@ -19,6 +19,7 @@ import java.util.*
 import android.widget.TextView
 import android.R.drawable.edit_text
 import android.widget.EditText
+import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.fragment_password_view.view.*
@@ -105,9 +106,20 @@ class PasswordViewFragment : Fragment() {
 
 
         button_genpassword.setOnClickListener{
-            val pass = genPassword(10, true)
-            passwordTextField.setText(pass)
-            passwordTextField2.setText(pass)
+            MaterialDialog.Builder(context!!)
+                    .title("Generate Password")
+                    .content("Specify password length:")
+                    .inputType(InputType.TYPE_CLASS_NUMBER)
+                    .inputRange(0,2)
+                    .input("Password Length", null, MaterialDialog.InputCallback{dialog: MaterialDialog, input: CharSequence  ->
+                        var pass = genPassword(input.toString().toInt(), dialog.isPromptCheckBoxChecked)
+                        passwordTextField.setText(pass)
+                        passwordTextField2.setText(pass)
+                    })
+                    .positiveText("Generate")
+                    .negativeText("Cancel")
+                    .checkBoxPrompt("Allow Special Characters?", true, null)
+                    .show()
         }
     }
 
