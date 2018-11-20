@@ -2,6 +2,7 @@ package xyz.willnwalker.yetanotherpasswordmanager
 
 import android.content.Context
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -67,7 +68,7 @@ class PasswordListAdapter(
                     .content("Username: " + entry.userName
                             + "\n" + "Password: " + entry.password
                             + "\n"  + "Notes: " + entry.notes
-                            + "\n"  + "Notes: " + entry.url)
+                            + "\n"  + "URL: " + entry.url)
                     .positiveText("Edit")
                     .onPositive{dialog: MaterialDialog, which: DialogAction ->
 //                        PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id);

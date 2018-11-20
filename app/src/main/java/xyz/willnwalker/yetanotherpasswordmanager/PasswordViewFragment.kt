@@ -73,14 +73,14 @@ class PasswordViewFragment : Fragment() {
             url.setText(entry.url)
             notes.setText(entry.notes)
             button_save.setOnClickListener {
+                realm.beginTransaction()
+
                 entry.title = serviceName.text.toString()
                 entry.userName = serviceUsername.text.toString()
                 entry.password = passwordTextField.text.toString()
                 entry.url = url.text.toString()
                 entry.notes = notes.text.toString()
 
-                realm.beginTransaction()
-                realm.copyToRealm(entry)
                 realm.commitTransaction()
                 findNavController(it).navigateUp()
             }
