@@ -7,7 +7,6 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import androidx.navigation.Navigation.findNavController
 
 import io.realm.Realm
@@ -15,13 +14,9 @@ import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.fragment_password_view.*
 import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
-import java.util.*
-import android.widget.TextView
-import android.R.drawable.edit_text
-import android.widget.EditText
+
 import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.kotlin.where
-import kotlinx.android.synthetic.main.fragment_password_view.view.*
 
 
 /**

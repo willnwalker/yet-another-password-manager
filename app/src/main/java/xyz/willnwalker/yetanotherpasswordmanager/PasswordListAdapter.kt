@@ -1,10 +1,7 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +9,6 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.Navigation.findNavController
-import androidx.navigation.findNavController
-import com.afollestad.materialdialogs.DialogAction
 import io.realm.*
 import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.kotlin.deleteFromRealm
