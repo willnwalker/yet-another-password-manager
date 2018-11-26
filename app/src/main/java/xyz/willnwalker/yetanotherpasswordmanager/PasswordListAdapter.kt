@@ -59,8 +59,6 @@ class PasswordListAdapter(
         //set list item onclicklistener here
         holder.container.setOnClickListener {
             val entry = data[position] as Entry
-//            PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id)
-//            findNavController(it).navigate(R.id.action_new_password)
             MaterialDialog.Builder(context)
                     .title(entry.title)
                     .autoDismiss(false)
@@ -70,12 +68,13 @@ class PasswordListAdapter(
                             + "\n"  + "URL: " + entry.url)
                     .positiveText("Edit")
                     .onPositive{ dialog, _ ->
-//                        PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id);
-//                        findNavController(it).navigate(R.id.action_new_password)
                         dialog.dismiss()
-                        val bundle = Bundle()
-                        bundle.putString("uuid", entry.id)
-                        findNavController(it).navigate(R.id.action_new_password, bundle)
+                        val args = PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id);
+                        findNavController(it).navigate(args)
+//                        dialog.dismiss()
+//                        val bundle = Bundle()
+//                        bundle.putString("uuid", entry.id)
+//                        findNavController(it).navigate(R.id.action_new_password, bundle)
                     }
                     .negativeText("Delete")
                     .onNegative { dialog, _ ->

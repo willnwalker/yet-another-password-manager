@@ -16,7 +16,11 @@
             app:enterAnim="@anim/nav_default_pop_enter_anim"
             app:exitAnim="@anim/nav_default_pop_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" >
+            <argument
+                android:name="uuid"
+                android:defaultValue="new_password" />
+        </action>
     </fragment>
 
     <fragment
@@ -26,8 +30,8 @@
         tools:layout="@layout/fragment_password_view" >
         <argument
             android:name="uuid"
-            android:defaultValue="new_uuid"
-            app:argType="string" />
+            app:argType="string"
+            android:defaultValue="new_password" />
     </fragment>
     <fragment
         android:id="@+id/login"

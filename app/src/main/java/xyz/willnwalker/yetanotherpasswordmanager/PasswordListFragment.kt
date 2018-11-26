@@ -54,9 +54,10 @@ class PasswordListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fab.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putString("uuid", "NEW_PASSWORD")
-            findNavController(it).navigate(R.id.action_new_password, bundle)
+            findNavController(it).navigate(R.id.action_new_password)
+//            val bundle = Bundle()
+//            bundle.putString("uuid", "NEW_PASSWORD")
+//            findNavController(it).navigate(R.id.action_new_password, bundle)
         }
 
         linearLayoutManager = LinearLayoutManager(activity)
