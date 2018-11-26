@@ -48,7 +48,7 @@ class PasswordViewFragment : Fragment() {
         realm = Realm.getInstance(config)
         val uuid = arguments!!.getString("uuid")
 
-        if(uuid != "NEW_PASSWORD"){
+        if(uuid != "new_password"){
             var entry = realm.where<Entry>().equalTo("id",uuid).findFirst()
             serviceName.setText(entry!!.title)
             serviceUsername.setText(entry.userName)
