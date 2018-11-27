@@ -43,7 +43,9 @@ class PasswordListAdapter(
         }
     }
 
-    // Create new views (invoked by the layout manager)
+    /**
+     * Create new views (invoked by the layout manager)
+     */
     override fun onCreateRealmViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         // create a new view
         val v = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
@@ -51,7 +53,9 @@ class PasswordListAdapter(
         return ViewHolder(v as FrameLayout)
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
+    /**
+     * Replace the contents of a view (invoked by the layout manager)
+     */
     override fun onBindRealmViewHolder(holder: ViewHolder, position: Int) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
