@@ -34,7 +34,7 @@ class PasswordViewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         config = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build()
         realm = Realm.getInstance(config)
-        val uuid = arguments!!.getString("uuid")
+        val uuid = PasswordViewFragmentArgs.fromBundle(arguments).uuid
 
         if(uuid != "new_password"){
             var entry = realm.where<Entry>().equalTo("id",uuid).findFirst()
