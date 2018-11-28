@@ -36,45 +36,22 @@ class PasswordViewFragment : Fragment() {
         realm = Realm.getInstance(config)
         val uuid = PasswordViewFragmentArgs.fromBundle(arguments).uuid
 
-        if(uuid != "new_password"){
-            var entry = realm.where<Entry>().equalTo("id",uuid).findFirst()
+        if(isNewPassword(uuid)){
+            val entry = Entry()
+            // Kyle - Save button OnClickListener
+            initSaveClickListener(entry)
+        }
+        else{
+            val entry = realm.where<Entry>().equalTo("id",uuid).findFirst()
             serviceName.setText(entry!!.title)
             serviceUsername.setText(entry.userName)
             passwordTextField.setText(entry.password)
             passwordTextField2.setText(entry.password)
             url.setText(entry.url)
             notes.setText(entry.notes)
-            button_save.setOnClickListener {
-                realm.beginTransaction()
 
-                entry.title = serviceName.text.toString()
-                entry.userName = serviceUsername.text.toString()
-                entry.password = passwordTextField.text.toString()
-                entry.url = url.text.toString()
-                entry.notes = notes.text.toString()
-
-                realm.commitTransaction()
-                findNavController(it).navigateUp()
-            }
+            initSaveClickListener(entry)
         }
-        else{
-            var entry = Entry()
-            // Kyle - Save button OnClickListener
-            button_save.setOnClickListener {
-                entry.title = serviceName.text.toString()
-                entry.userName = serviceUsername.text.toString()
-                entry.password = passwordTextField.text.toString()
-                entry.url = url.text.toString()
-                entry.notes = notes.text.toString()
-
-                realm.beginTransaction()
-                realm.copyToRealm(entry)
-                realm.commitTransaction()
-                findNavController(it).navigateUp()
-            }
-        }
-
-
 
         button_genpassword.setOnClickListener{
             MaterialDialog.Builder(context!!)
@@ -94,7 +71,27 @@ class PasswordViewFragment : Fragment() {
         }
     }
 
-    fun genPassword(length: Int, specialChars: Boolean): String {
+    private fun initSaveClickListener(entry: Entry){
+        button_save.setOnClickListener {
+            realm.beginTransaction()
+
+            entry.title = serviceName.text.toString()
+            entry.userName = serviceUsername.text.toString()
+            entry.password = passwordTextField.text.toString()
+            entry.url = url.text.toString()
+            entry.notes = notes.text.toString()
+
+            realm.copyToRealmOrUpdate(entry)
+            realm.commitTransaction()
+            findNavController(it).navigateUp()
+        }
+    }
+
+    private fun isNewPassword(uuid: String): Boolean{
+        return uuid == "new_password"
+    }
+
+    private fun genPassword(length: Int, specialChars: Boolean): String {
         val range: Int
         var pass = ""
         if (specialChars) {
@@ -116,7 +113,7 @@ class PasswordViewFragment : Fragment() {
         return pass
     }
 
-    fun genCharacter(num: Int): Char {
+    private fun genCharacter(num: Int): Char {
         var num = num
         // when is like switch in java
         when {

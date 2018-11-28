@@ -7,8 +7,10 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="no_passwords_message">Looks like you don\'t have any saved passwords! Click the button in the bottom right hand corner to add a new password.</string>
+    <string name="new_entry">New Entry</string>
+    <string name="no_passwords_message">It looks like you don\'t have any saved passwords! Click the button in the bottom right hand corner to add a new entry.</string>
     <string name="authentication_message">Place your fingerprint on the fingerprint reader to unlock your passwords.</string>
+    <string name="setup_login_message">It looks like this is the first time using the app! Please choose a pin or use your fingerprint to secure your passwords.</string>
     <string name="password_view_service_string">Enter/Change the service\'s name/website and password in the boxes below:</string>
     <string name="password_view_service_hint">Service name/website</string>
     <string name="password_view_username">Username</string>

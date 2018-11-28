@@ -1,5 +1,7 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
@@ -9,14 +11,25 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(){
 
+    lateinit var prefs : SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        prefs = getSharedPreferences("xyz.willnwalker.yetanotherpasswordmanager", Context.MODE_PRIVATE)
 
         // initialize Realm
         Realm.init(applicationContext)
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (prefs.getBoolean("firstrun", true)) {
+
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
