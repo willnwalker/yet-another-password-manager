@@ -94,14 +94,14 @@ class PasswordViewFragment : Fragment() {
     private fun genPassword(length: Int, specialChars: Boolean): String {
         val range: Int
         var pass = ""
-        if (specialChars) {
-            range = 94
-        } else {
-            range = 62
+        //Set the range of ascii values depending on special character allowance
+        when (specialChars) {
+            true -> range = 94
+            false -> range = 62
         }
         for (i in 0 until length) {
             try {
-                val secRand = SecureRandom.getInstance("SHA1PRNG")
+                val secRand = SecureRandom.getInstance("SHA1PRNG") //Most secure windows algorithm
                 if (specialChars)
                     pass += (secRand.nextInt(range) + 33).toChar()
                 else
@@ -123,6 +123,31 @@ class PasswordViewFragment : Fragment() {
             else -> println("secRand returned out of range $num")
         }
         return num.toChar()
+    }
+
+    private fun validateEntries(): Boolean {
+        //Test cases
+        var content = ""
+        //Check for invalid entries
+        if (passwordTextField.text.toString() != passwordTextField2.text.toString()) {
+            content = "Please make sure that your passwords match"
+        }
+        if (passwordTextField.text.toString() == ""){
+            content = "Please enter a password for your account"
+        }
+        if(serviceName.text.toString() == "") {
+            content = "Please enter a title for your account"
+        }
+        return if(content != "")
+            true
+        else{
+            //Create alert dialog
+            MaterialDialog.Builder(context!!)
+                    .positiveText("Okay")
+                    .content(content)
+                    .show()
+            false
+        }
     }
 
 }
