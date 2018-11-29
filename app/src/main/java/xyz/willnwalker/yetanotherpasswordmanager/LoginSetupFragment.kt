@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-
 /**
  * A simple [Fragment] subclass.
  *
@@ -22,7 +21,7 @@ class LoginSetupFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+        PreferenceManager.getDefaultSharedPreferences(this)
 //        .edit().putBoolean("firstrun", false).commit();
 
     }
