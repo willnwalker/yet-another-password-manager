@@ -3,11 +3,12 @@ package xyz.willnwalker.yetanotherpasswordmanager
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
+import androidx.navigation.Navigation
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -16,6 +17,7 @@ class MainActivity : AppCompatActivity(){
     lateinit var prefs : SharedPreferences
     lateinit var nav : NavController
     var firstRun: Boolean = true
+    var securityEnabled: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,20 +26,20 @@ class MainActivity : AppCompatActivity(){
         setSupportActionBar(toolbar)
         // initialize Realm
         Realm.init(applicationContext)
-        prefs = getSharedPreferences("xyz.willnwalker.yetanotherpasswordmanager", Context.MODE_PRIVATE)
-        nav = findNavController(R.layout.activity_main)
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        nav = Navigation.findNavController(this, R.id.nav_host)
 
     }
 
     override fun onResume() {
         super.onResume()
 
-        firstRun = prefs.getBoolean("firstrun", true)
-        if (firstRun) {
-            nav.navigate(R.id.loginSetupFragment)
-        }
-        else{
-            nav.navigate(R.id.loginFragment)
+        firstRun = prefs.getBoolean("firstRun", true)
+        securityEnabled = prefs.getBoolean("securityEnabled", false)
+        when{
+            firstRun -> nav.navigate(R.id.loginSetupFragment)
+            !firstRun && securityEnabled -> nav.navigate(R.id.loginFragment)
+            !firstRun && !securityEnabled -> nav.navigate(R.id.passwordListFragment)
         }
     }
 
