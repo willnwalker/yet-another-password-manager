@@ -13,7 +13,10 @@ import androidx.navigation.Navigation.findNavController
 import io.realm.*
 import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.kotlin.deleteFromRealm
-import org.w3c.dom.Text
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.support.v4.content.ContextCompat.getSystemService
+import kotlinx.android.synthetic.main.password_view_dialog.view.*
 
 class PasswordListAdapter(
         realmConfig: RealmConfiguration,
@@ -29,6 +32,9 @@ class PasswordListAdapter(
         animateExtraColumnName){
 
     private val realm = Realm.getInstance(realmConfig)
+
+    private lateinit var clipboard: ClipboardManager
+    private var clip: ClipData? = null
 
     /**
      * Provide a suitable constructor (depends on the kind of dataset)
@@ -61,6 +67,7 @@ class PasswordListAdapter(
     override fun onBindRealmViewHolder(holder: ViewHolder, position: Int) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+        clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         holder.mTextView.text = data[position]!!.title
         //set list item onclicklistener here
         holder.container.setOnClickListener {
@@ -71,23 +78,11 @@ class PasswordListAdapter(
                     .autoDismiss(false)
                     .customView(R.layout.password_view_dialog, true)
 
-
-/*
-                    .content("Username: " + entry.userName
-                            + "\n" + "Password: " + entry.password
-                            + "\n"  + "Notes: " + entry.notes
-                            + "\n"  + "URL: " + entry.url)
-                    */
-
                     .positiveText("Edit")
                     .onPositive{ dialog, _ ->
                         dialog.dismiss()
-                        val args = PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id);
+                        val args = PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id)
                         findNavController(it).navigate(args)
-//                        dialog.dismiss()
-//                        val bundle = Bundle()
-//                        bundle.putString("uuid", entry.id)
-//                        findNavController(it).navigate(R.id.action_new_password, bundle)
                     }
                     .negativeText("Delete")
                     .onNegative { dialog, _ ->
@@ -113,12 +108,6 @@ class PasswordListAdapter(
             val notes: TextView = customView.findViewById(R.id.notes)
             val url: TextView = customView.findViewById(R.id.url)
 
-            /*serviceName.text = entry.title
-            username.text = entry.userName
-            password.text = entry.password
-            notes.text = entry.notes
-            url.text = entry.url*/
-
             serviceName.text = entry.title
             username.append(" " + entry.userName)
             password.append(" " + entry.password)
@@ -126,7 +115,13 @@ class PasswordListAdapter(
             url.append(" " + entry.url)
 
             dialog.show()
-            
+
+            customView.button_copy_password.setOnClickListener {
+                clip = ClipData.newPlainText("password", entry.password)
+                clipboard.primaryClip = clip
+                Toast.makeText(context, "Password Copied", Toast.LENGTH_SHORT).show()
+            }
+
         }
     }
 
