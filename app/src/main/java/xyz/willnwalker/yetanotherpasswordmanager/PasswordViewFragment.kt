@@ -61,8 +61,8 @@ class PasswordViewFragment : Fragment() {
                     .title("Generate Password")
                     .content("Specify password length:")
                     .inputType(InputType.TYPE_CLASS_NUMBER)
-                    .inputRange(0,2)
-                    .input("Password Length", null, MaterialDialog.InputCallback{dialog: MaterialDialog, input: CharSequence  ->
+                    .inputRange(1,2)
+                    .input(null, "12", MaterialDialog.InputCallback{dialog: MaterialDialog, input: CharSequence  ->
                         var pass = genPassword(input.toString().toInt(), dialog.isPromptCheckBoxChecked)
                         passwordTextField.setText(pass)
                         passwordTextField2.setText(pass)
@@ -134,7 +134,9 @@ class PasswordViewFragment : Fragment() {
         //Test cases
         var content = ""
         //Check for invalid entries
-
+        if(url.text.toString() != "" && !validURL(url.text.toString())){
+            content = "Please enter a valid URL"
+        }
         if (passwordTextField.text.toString() != passwordTextField2.text.toString()) {
             content = "Please make sure that your passwords match"
         }
@@ -163,10 +165,10 @@ class PasswordViewFragment : Fragment() {
     }
 
     private fun validURL(url: String): Boolean {
-        if(URLUtil.isValidUrl(url)) {
+        //if(URLUtil.isValidUrl(url)) {
             if (Patterns.WEB_URL.matcher(url).matches())
                 return true
-        }
+        //}
         return false
     }
 
