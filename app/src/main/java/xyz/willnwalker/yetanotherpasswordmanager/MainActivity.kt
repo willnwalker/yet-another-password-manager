@@ -1,6 +1,5 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -14,10 +13,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(){
 
-    lateinit var prefs : SharedPreferences
-    lateinit var nav : NavController
-    var firstRun: Boolean = true
-    var securityEnabled: Boolean = false
+    private lateinit var prefs : SharedPreferences
+    private lateinit var nav : NavController
+    private var firstRun: Boolean = true
+    private var securityEnabled: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,9 +36,8 @@ class MainActivity : AppCompatActivity(){
         firstRun = prefs.getBoolean("firstRun", true)
         securityEnabled = prefs.getBoolean("securityEnabled", false)
         when{
-            firstRun -> nav.navigate(R.id.loginSetupFragment)
-            !firstRun && securityEnabled -> nav.navigate(R.id.loginFragment)
-            !firstRun && !securityEnabled -> nav.navigate(R.id.passwordListFragment)
+            firstRun || securityEnabled -> nav.navigate(R.id.loginFragment)
+            else -> nav.navigate(R.id.passwordListFragment)
         }
     }
 

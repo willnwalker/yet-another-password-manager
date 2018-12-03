@@ -34,10 +34,10 @@
             android:defaultValue="new_password" />
     </fragment>
     <fragment
-        android:id="@+id/loginSetupFragment"
-        android:name="xyz.willnwalker.yetanotherpasswordmanager.LoginSetupFragment"
+        android:id="@+id/loginFragment"
+        android:name="xyz.willnwalker.yetanotherpasswordmanager.LoginFragment"
         android:label="LoginSetupFragment"
-        tools:layout="@layout/fragment_login_setup">
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginSetupFragment_to_passwordListFragment"
             app:destination="@id/passwordListFragment" />
@@ -47,14 +47,5 @@
         android:name="xyz.willnwalker.yetanotherpasswordmanager.LoadingFragment"
         android:label="loadingFragment"
         tools:layout="@layout/fragment_loading">
-    </fragment>
-    <fragment
-        android:id="@+id/loginFragment"
-        android:name="xyz.willnwalker.yetanotherpasswordmanager.LoginFragment"
-        android:label="LoginFragment"
-        tools:layout="@layout/fragment_login">
-        <action
-            android:id="@+id/action_loginFragment_to_passwordListFragment"
-            app:destination="@id/passwordListFragment" />
     </fragment>
 </navigation>

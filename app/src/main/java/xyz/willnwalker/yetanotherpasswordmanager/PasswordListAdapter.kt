@@ -2,6 +2,7 @@ package xyz.willnwalker.yetanotherpasswordmanager
 
 import android.content.Context
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -90,7 +91,7 @@ class PasswordListAdapter(
                                     realm.beginTransaction()
                                     entry.deleteFromRealm()
                                     realm.commitTransaction()
-                                    Toast.makeText(context, "Password Deleted", Toast.LENGTH_SHORT).show()
+                                    Snackbar.make(it, "Password Deleted.", Snackbar.LENGTH_LONG).show()
                                 }
                                 .negativeText("No")
                                 .show()

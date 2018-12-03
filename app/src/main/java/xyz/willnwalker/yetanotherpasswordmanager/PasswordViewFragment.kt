@@ -1,7 +1,6 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
-import android.graphics.Color
-import android.graphics.PorterDuff
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.InputType
@@ -26,6 +25,7 @@ import android.widget.Toast
  *
  */
 class PasswordViewFragment : Fragment() {
+    private lateinit var contextConfirmed : Context
     private lateinit var config: RealmConfiguration
     private lateinit var realm : Realm
 
@@ -60,16 +60,16 @@ class PasswordViewFragment : Fragment() {
         }
 
         button_genpassword.setOnClickListener{
-            MaterialDialog.Builder(context!!)
+            MaterialDialog.Builder(contextConfirmed)
                     .title("Generate Password")
                     .content("Specify password length:")
                     .inputType(InputType.TYPE_CLASS_NUMBER)
                     .inputRange(0,2)
-                    .input(null, "12", MaterialDialog.InputCallback{dialog: MaterialDialog, input: CharSequence  ->
-                        var pass = genPassword(input.toString().toInt(), dialog.isPromptCheckBoxChecked)
+                    .input("Password Length", null){dialog: MaterialDialog, input: CharSequence  ->
+                        val pass = genPassword(input.toString().toInt(), dialog.isPromptCheckBoxChecked)
                         passwordTextField.setText(pass)
                         passwordTextField2.setText(pass)
-                    })
+                    }
                     .positiveText("Generate")
                     .negativeText("Cancel")
                     .checkBoxPrompt("Allow Special Characters?", true, null)
@@ -138,27 +138,30 @@ class PasswordViewFragment : Fragment() {
         var content = ""
         //Check for invalid entries
         if (passwordTextField.text.toString() != passwordTextField2.text.toString()) {
-            content = "Please make sure that your passwords match"
+            content = "Please make sure that your passwords match."
         }
-        if (passwordTextField.text.toString() == "") {
-            content = "Please enter a password for your account"
+        if (passwordTextField.text.toString() == ""){
+            content = "Please enter a password for your account."
         }
         if(serviceName.text.toString() == "") {
-            content = "Please enter a title for your account"
+            content = "Please enter a title for your account."
         }
-
-        //validateWith function to change the underline color for each edit text field
-        serviceName.validateWith(null, null) { textView -> textView.text.isNotEmpty()}
-        passwordTextField.validateWith(null,null) {textView -> textView.text.isNotEmpty()}
-        passwordTextField2.validateWith(null,null) {textView -> textView.text.toString() == passwordTextField.text.toString()}
-
         return if(content == "")
             true
-        else {
-            val toast = Toast.makeText(context!!, content, Toast.LENGTH_SHORT)
-            toast.show()
+        else{
+            //Create alert dialog
+            MaterialDialog.Builder(contextConfirmed)
+                    .positiveText("Okay")
+                    .content(content)
+                    .show()
             false
         }
+    }
+
+    // Need this because context doesn't exist until fragment attached to navigation controller
+    override fun onAttach(_context: Context){
+        super.onAttach(_context)
+        contextConfirmed = _context
     }
 
 }

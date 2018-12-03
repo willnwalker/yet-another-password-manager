@@ -3,7 +3,8 @@
     package="xyz.willnwalker.yetanotherpasswordmanager">
 
     <uses-feature android:name="android.hardware.fingerprint"
-        android:required="true"/>
+        android:required="false"/>
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
 
     <application
         android:allowBackup="true"

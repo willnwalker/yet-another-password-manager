@@ -6,4 +6,9 @@
     <color name="colorAccent">#768FFF</color>
     <!--<color name="colorAccent">#FFC107</color>-->
     <color name="grey">#A9A9A9</color>
+
+    <color name="warning_color">#F44336</color>
+    <color name="hint_color">#000000</color>
+    <color name="success_color">#4CAF50</color>
+
 </resources>

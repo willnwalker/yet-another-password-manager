@@ -25,4 +25,11 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="string_cancel">Cancel</string>
+
+    <string name="authenticate_instructions">Click the button below to authenticate your fingerprint.</string>
+    <string name="cancel">Cancel</string>
+    <string name="fingerprint_not_recognized">Fingerprint not recognized. Try again.</string>
+    <string name="touch_sensor">Touch sensor.</string>
+    <string name="fingerprint_recognized">Fingerprint recognized.</string>
 </resources>

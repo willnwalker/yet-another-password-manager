@@ -16,7 +16,8 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "xyz.willnwalker.yetanotherpasswordmanager"
-        minSdkVersion 18
+//        minSdkVersion 18
+        minSdkVersion 23
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
