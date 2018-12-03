@@ -20,7 +20,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.kotlin.where
 import android.graphics.drawable.Drawable
 import android.support.v4.content.res.ResourcesCompat
-import android.widget.Toast
 
 
 /**
@@ -68,7 +67,7 @@ class PasswordViewFragment : Fragment() {
                     .content("Specify password length:")
                     .inputType(InputType.TYPE_CLASS_NUMBER)
                     .inputRange(1,2)
-                    .input(null, "12", MaterialDialog.InputCallback{dialog: MaterialDialog, input: CharSequence  ->
+                    .input(null, "12") { dialog: MaterialDialog, input: CharSequence  ->
                         var pass = genPassword(input.toString().toInt(), dialog.isPromptCheckBoxChecked)
                         passwordTextField.setText(pass)
                         passwordTextField2.setText(pass)
@@ -164,7 +163,7 @@ class PasswordViewFragment : Fragment() {
         return if(content == "")
             true
         else {
-            val toast = Toast.makeText(context!!, content, Toast.LENGTH_SHORT)
+            val toast = Toast.makeText(contextConfirmed, content, Toast.LENGTH_SHORT)
             toast.show()
             false
         }
