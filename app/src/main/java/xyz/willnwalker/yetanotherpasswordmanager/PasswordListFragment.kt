@@ -48,7 +48,7 @@ class PasswordListFragment : Fragment() {
 //        val config: RealmConfiguration = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build()
         val realm = Realm.getInstance(realmConfig)
         val entries = realm.where<Entry>().findAllAsync()
-        passwordList.setAdapter(PasswordListAdapter(contextConfirmed, entries, true, false, ""))
+        passwordList.setAdapter(PasswordListAdapter(realmConfig, contextConfirmed, entries, true, false, ""))
 
     }
 

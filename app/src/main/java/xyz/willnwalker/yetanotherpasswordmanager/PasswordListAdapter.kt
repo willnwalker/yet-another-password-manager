@@ -15,6 +15,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.kotlin.deleteFromRealm
 
 class PasswordListAdapter(
+        realmConfig: RealmConfiguration,
         context: Context,
         private val data: RealmResults<Entry>,
         automaticUpdate: Boolean,
@@ -26,8 +27,7 @@ class PasswordListAdapter(
         animateIdType,
         animateExtraColumnName){
 
-    private val config: RealmConfiguration = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build()
-    private val realm = Realm.getInstance(config)
+    private val realm = Realm.getInstance(realmConfig)
 
     /**
      * Provide a suitable constructor (depends on the kind of dataset)
