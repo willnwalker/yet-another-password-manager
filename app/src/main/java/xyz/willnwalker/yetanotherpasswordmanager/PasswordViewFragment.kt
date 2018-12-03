@@ -118,8 +118,8 @@ class PasswordViewFragment : Fragment() {
         return pass
     }
 
-    private fun genCharacter(num: Int): Char {
-        var num = num
+    private fun genCharacter(number: Int): Char {
+        var num = number
         // when is like switch in java
         when {
             num <= 9 -> num += 48
@@ -134,7 +134,7 @@ class PasswordViewFragment : Fragment() {
         //Test cases
         var content = ""
         //Check for invalid entries
-        if(url.text.toString() != "" && !validURL(url.text.toString())){
+        if(url.text.toString() != "" && !isValidURL(url.text.toString())){
             content = "Please enter a valid URL"
         }
         if (passwordTextField.text.toString() != passwordTextField2.text.toString()) {
@@ -152,7 +152,7 @@ class PasswordViewFragment : Fragment() {
         serviceName.validateWith(null, null) { textView -> textView.text.isNotEmpty()}
         passwordTextField.validateWith(null,null) {textView -> textView.text.isNotEmpty()}
         passwordTextField2.validateWith(null,null) {textView -> textView.text.toString() == passwordTextField.text.toString()}
-        if(url.text.toString() != "") url.validateWith(null,null) {textView -> validURL(textView.text.toString())}
+        if(url.text.toString() != "") url.validateWith(null,null) {textView -> isValidURL(textView.text.toString())}
 
 
         return if(content == "")
@@ -164,7 +164,7 @@ class PasswordViewFragment : Fragment() {
         }
     }
 
-    private fun validURL(url: String): Boolean {
+    private fun isValidURL(url: String): Boolean {
         //if(URLUtil.isValidUrl(url)) {
             if (Patterns.WEB_URL.matcher(url).matches())
                 return true
