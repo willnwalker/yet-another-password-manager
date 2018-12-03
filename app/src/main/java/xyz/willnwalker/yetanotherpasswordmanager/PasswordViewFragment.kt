@@ -1,5 +1,7 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.InputType
@@ -14,6 +16,9 @@ import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.kotlin.where
+import android.graphics.drawable.Drawable
+import android.support.v4.content.res.ResourcesCompat
+import android.widget.Toast
 
 
 /**
@@ -42,15 +47,16 @@ class PasswordViewFragment : Fragment() {
             initSaveClickListener(entry)
         }
         else{
-            val entry = realm.where<Entry>().equalTo("id",uuid).findFirst()
-            serviceName.setText(entry!!.title)
-            serviceUsername.setText(entry.userName)
-            passwordTextField.setText(entry.password)
-            passwordTextField2.setText(entry.password)
-            url.setText(entry.url)
-            notes.setText(entry.notes)
+                val entry = realm.where<Entry>().equalTo("id", uuid).findFirst()
+                serviceName.setText(entry!!.title)
+                serviceUsername.setText(entry.userName)
+                passwordTextField.setText(entry.password)
+                passwordTextField2.setText(entry.password)
+                url.setText(entry.url)
+                notes.setText(entry.notes)
 
-            initSaveClickListener(entry)
+                initSaveClickListener(entry)
+
         }
 
         button_genpassword.setOnClickListener{
@@ -59,7 +65,7 @@ class PasswordViewFragment : Fragment() {
                     .content("Specify password length:")
                     .inputType(InputType.TYPE_CLASS_NUMBER)
                     .inputRange(0,2)
-                    .input("Password Length", null, MaterialDialog.InputCallback{dialog: MaterialDialog, input: CharSequence  ->
+                    .input(null, "12", MaterialDialog.InputCallback{dialog: MaterialDialog, input: CharSequence  ->
                         var pass = genPassword(input.toString().toInt(), dialog.isPromptCheckBoxChecked)
                         passwordTextField.setText(pass)
                         passwordTextField2.setText(pass)
@@ -73,17 +79,19 @@ class PasswordViewFragment : Fragment() {
 
     private fun initSaveClickListener(entry: Entry){
         button_save.setOnClickListener {
-            realm.beginTransaction()
+            if(validateEntries()){
+                realm.beginTransaction()
 
-            entry.title = serviceName.text.toString()
-            entry.userName = serviceUsername.text.toString()
-            entry.password = passwordTextField.text.toString()
-            entry.url = url.text.toString()
-            entry.notes = notes.text.toString()
+                entry.title = serviceName.text.toString()
+                entry.userName = serviceUsername.text.toString()
+                entry.password = passwordTextField.text.toString()
+                entry.url = url.text.toString()
+                entry.notes = notes.text.toString()
 
-            realm.copyToRealmOrUpdate(entry)
-            realm.commitTransaction()
-            findNavController(it).navigateUp()
+                realm.copyToRealmOrUpdate(entry)
+                realm.commitTransaction()
+                findNavController(it).navigateUp()
+            }
         }
     }
 
@@ -113,8 +121,8 @@ class PasswordViewFragment : Fragment() {
         return pass
     }
 
-    private fun genCharacter(num: Int): Char {
-        var num = num
+    private fun genCharacter(number: Int): Char {
+        var num = number
         // when is like switch in java
         when {
             num <= 9 -> num += 48
@@ -132,20 +140,23 @@ class PasswordViewFragment : Fragment() {
         if (passwordTextField.text.toString() != passwordTextField2.text.toString()) {
             content = "Please make sure that your passwords match"
         }
-        if (passwordTextField.text.toString() == ""){
+        if (passwordTextField.text.toString() == "") {
             content = "Please enter a password for your account"
         }
         if(serviceName.text.toString() == "") {
             content = "Please enter a title for your account"
         }
-        return if(content != "")
+
+        //validateWith function to change the underline color for each edit text field
+        serviceName.validateWith(null, null) { textView -> textView.text.isNotEmpty()}
+        passwordTextField.validateWith(null,null) {textView -> textView.text.isNotEmpty()}
+        passwordTextField2.validateWith(null,null) {textView -> textView.text.toString() == passwordTextField.text.toString()}
+
+        return if(content == "")
             true
-        else{
-            //Create alert dialog
-            MaterialDialog.Builder(context!!)
-                    .positiveText("Okay")
-                    .content(content)
-                    .show()
+        else {
+            val toast = Toast.makeText(context!!, content, Toast.LENGTH_SHORT)
+            toast.show()
             false
         }
     }
