@@ -76,17 +76,19 @@ class PasswordViewFragment : Fragment() {
 
     private fun initSaveClickListener(entry: Entry){
         button_save.setOnClickListener {
-            realm.beginTransaction()
+            if(validateEntries()) {
+                realm.beginTransaction()
 
-            entry.title = serviceName.text.toString()
-            entry.userName = serviceUsername.text.toString()
-            entry.password = passwordTextField.text.toString()
-            entry.url = url.text.toString()
-            entry.notes = notes.text.toString()
+                entry.title = serviceName.text.toString()
+                entry.userName = serviceUsername.text.toString()
+                entry.password = passwordTextField.text.toString()
+                entry.url = url.text.toString()
+                entry.notes = notes.text.toString()
 
-            realm.copyToRealmOrUpdate(entry)
-            realm.commitTransaction()
-            findNavController(it).navigateUp()
+                realm.copyToRealmOrUpdate(entry)
+                realm.commitTransaction()
+                findNavController(it).navigateUp()
+            }
         }
     }
 
