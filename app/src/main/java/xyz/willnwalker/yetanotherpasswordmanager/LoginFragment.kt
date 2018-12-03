@@ -9,6 +9,7 @@ import android.support.v4.hardware.fingerprint.FingerprintManagerCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.afollestad.materialdialogs.MaterialDialog
 
@@ -22,6 +23,7 @@ class LoginFragment : Fragment(){
     private lateinit var contextConfirmed : Context
     private lateinit var prefs: SharedPreferences
     private lateinit var viewConfirmed: View
+    private lateinit var nav: NavController
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -33,6 +35,7 @@ class LoginFragment : Fragment(){
         super.onViewCreated(view, savedInstanceState)
         viewConfirmed = view
         prefs = PreferenceManager.getDefaultSharedPreferences(contextConfirmed)
+        nav = findNavController()
 
     }
 
@@ -42,8 +45,8 @@ class LoginFragment : Fragment(){
         val securityEnabled = prefs.getBoolean("securityEnabled", false)
 
         when{
-            firstRun -> showSetupDialogs()
-            securityEnabled -> showAuthDialogs()
+            firstRun -> showSetupFlow()
+            securityEnabled -> showAuthFlow()
         }
 
     }
@@ -54,7 +57,7 @@ class LoginFragment : Fragment(){
         contextConfirmed = _context
     }
 
-    private fun showSetupDialogs(){
+    private fun showSetupFlow(){
         MaterialDialog.Builder(contextConfirmed)
                 .title("Welcome!")
                 .content(R.string.setup_login_dialog_message)
@@ -67,7 +70,10 @@ class LoginFragment : Fragment(){
                         else -> {
                             val dialog = FingerprintDialog.newInstance(
                                     "Sign In",
-                                    "Confirm fingerprint to enable security.")
+                                    "Confirm fingerprint to enable security.",
+                                    "setup",
+                                    nav
+                            )
                             dialog.show(fragmentManager, FingerprintDialog.FRAGMENT_TAG)
                         }
                     }
@@ -81,10 +87,12 @@ class LoginFragment : Fragment(){
                 .show()
     }
 
-    private fun showAuthDialogs() {
+    private fun showAuthFlow() {
         val dialog = FingerprintDialog.newInstance(
                 "Sign In",
-                "Confirm fingerprint to continue."
+                "Confirm fingerprint to continue.",
+                "auth",
+                nav
         )
         dialog.show(fragmentManager, FingerprintDialog.FRAGMENT_TAG)
     }
@@ -94,7 +102,7 @@ class LoginFragment : Fragment(){
                 .content(extraMessage + getString(R.string.setup_login_dialog_message_negative))
                 .positiveText("Okay")
                 .onPositive{_, _ ->
-                    findNavController().navigate(R.id.action_loginSetupFragment_to_passwordListFragment)
+                    nav.navigate(R.id.action_loginSetupFragment_to_passwordListFragment)
                 }
                 .show()
     }

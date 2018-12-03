@@ -26,7 +26,8 @@ import android.widget.Toast
  */
 class PasswordViewFragment : Fragment() {
     private lateinit var contextConfirmed : Context
-    private lateinit var config: RealmConfiguration
+    private lateinit var uiListener: UIListener
+    private lateinit var realmConfig: RealmConfiguration
     private lateinit var realm : Realm
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -37,8 +38,7 @@ class PasswordViewFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        config = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build()
-        realm = Realm.getInstance(config)
+        realm = Realm.getInstance(realmConfig)
         val uuid = PasswordViewFragmentArgs.fromBundle(arguments).uuid
 
         if(isNewPassword(uuid)){
@@ -162,6 +162,8 @@ class PasswordViewFragment : Fragment() {
     override fun onAttach(_context: Context){
         super.onAttach(_context)
         contextConfirmed = _context
+        uiListener = contextConfirmed as UIListener
+        realmConfig = uiListener.getRealmConfig()
     }
 
 }

@@ -1,18 +1,22 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.KeyProperties
 import android.support.v4.app.DialogFragment
-import android.support.v4.app.Fragment
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.NavController
 import com.afollestad.materialdialogs.MaterialDialog
+import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.dialog_fingerprint.*
 import java.io.IOException
 import java.security.*
@@ -29,8 +33,12 @@ import javax.crypto.SecretKey
 class FingerprintDialog : DialogFragment(), FingerprintController.Callback {
 
     private lateinit var contextConfirmed : Context
+    private lateinit var nav: NavController
+    private lateinit var prefs: SharedPreferences
+    private lateinit var uiListener: UIListener
     private var title: String = ""
     private var subtitle: String = ""
+    private var flow: String = ""
 
     private val controller: FingerprintController by lazy {
         FingerprintController(
@@ -78,6 +86,8 @@ class FingerprintDialog : DialogFragment(), FingerprintController.Callback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(contextConfirmed)
 
         try {
             keyStore = KeyStore.getInstance("AndroidKeyStore")
@@ -127,23 +137,64 @@ class FingerprintDialog : DialogFragment(), FingerprintController.Callback {
     }
 
     override fun onAuthenticated() {
-        //TODO:
-        this.dismiss()
+
         MaterialDialog.Builder(contextConfirmed)
                 .title("Success!")
                 .content("Authenticated with fingerprint successfully.")
                 .positiveText("Okay")
                 .show()
+        this.dismiss()
+        when{
+            flow.equals("setup") -> {
+//                val newKeyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
+//                val keyGenParameterSpec = KeyGenParameterSpec.Builder("RealmKey",
+//                        KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+//                        .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+//                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+//                        .build()
+//                newKeyGenerator.init(keyGenParameterSpec)
+//                val secretKey = newKeyGenerator.generateKey()
+                val key = ByteArray(64)
+                SecureRandom().nextBytes(key)
+                prefs.edit().putString("RealmKey", Base64.encodeToString(key, Base64.NO_WRAP)).apply()
+                buildConfig(key)
+                prefs.edit().putBoolean("firstRun",false).apply()
+                prefs.edit().putBoolean("securityEnabled",true).apply()
+                nav.navigate(R.id.action_loginSetupFragment_to_passwordListFragment)
+
+            }
+            else -> {
+//                val keyStore = KeyStore.getInstance("AndroidKeyStore")
+//                keyStore.load(null)
+//                val secretKey = keyStore.getKey("RealmKey", null)
+                val key = Base64.decode(prefs.getString("RealmKey",""), Base64.NO_WRAP)
+                buildConfig(key)
+                nav.navigate(R.id.action_loginSetupFragment_to_passwordListFragment)
+            }
+        }
     }
 
     override fun onError() {
-        //TODO:
         this.dismiss()
-        MaterialDialog.Builder(contextConfirmed)
-                .title("Failure!")
-                .content("Did not authenticate with fingerprint successfully.")
-                .positiveText("Okay")
-                .show()
+        when{
+            flow == "setup" -> {
+                prefs.edit().putBoolean("securityEnabled",false).apply()
+                MaterialDialog.Builder(contextConfirmed)
+                        .title("Failure!")
+                        .content("Fingerprint security setup was not successful. You can always enable it later in the 'Settings' menu.")
+                        .positiveText("Okay")
+                        .show()
+                uiListener.setRealmConfig(RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build())
+            }
+            else -> {
+                MaterialDialog.Builder(contextConfirmed)
+                        .title("Failure!")
+                        .content("Fingerprint authentication was not successful. Exiting")
+                        .positiveText("Okay")
+                        .show()
+                uiListener.exit()
+            }
+        }
     }
 
     /**
@@ -234,6 +285,11 @@ class FingerprintDialog : DialogFragment(), FingerprintController.Callback {
 
     }
 
+    private fun buildConfig(bytes: ByteArray){
+        val realmConfig = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().encryptionKey(bytes).build()
+        uiListener.setRealmConfig(realmConfig)
+    }
+
     companion object {
         /**
          * Fragment tag that is used when this dialog is shown.
@@ -252,27 +308,30 @@ class FingerprintDialog : DialogFragment(), FingerprintController.Callback {
          * @param[title] The title of this FingerprintDialog.
          * @param[subtitle] The subtitle or description of the dialog.
          */
-        fun newInstance(title: String, subtitle: String): FingerprintDialog {
+        fun newInstance(title: String, subtitle: String, flow: String, nav: NavController): FingerprintDialog {
 //            val args = Bundle()
 //            args.putString(ARG_TITLE, title)
 //            args.putString(ARG_SUBTITLE, subtitle)
 
             val fragment = FingerprintDialog()
-            fragment.setText(title, subtitle)
+            fragment.setVars(title, subtitle, flow, nav)
 //            fragment.arguments = args
 
             return fragment
         }
     }
 
-    fun setText(title: String, subtitle: String){
+    fun setVars(title: String, subtitle: String, flow: String, nav: NavController){
         this.title = title
         this.subtitle = subtitle
+        this.flow = flow
+        this.nav = nav
     }
 
     // Need this because context doesn't exist until fragment attached to navigation controller
     override fun onAttach(_context: Context){
         super.onAttach(context)
         contextConfirmed = _context
+        uiListener = contextConfirmed as UIListener
     }
 }

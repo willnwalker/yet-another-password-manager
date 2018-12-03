@@ -9,12 +9,14 @@ import android.view.MenuItem
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import io.realm.Realm
+import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity(), UIListener{
 
     private lateinit var prefs : SharedPreferences
     private lateinit var nav : NavController
+    private lateinit var realmConfig: RealmConfiguration
     private var firstRun: Boolean = true
     private var securityEnabled: Boolean = false
 
@@ -43,9 +45,7 @@ class MainActivity : AppCompatActivity(){
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        if(!firstRun){
-            menuInflater.inflate(R.menu.main, menu)
-        }
+        menuInflater.inflate(R.menu.main, menu)
         return true
     }
 
@@ -57,5 +57,17 @@ class MainActivity : AppCompatActivity(){
             R.id.action_settings -> return true
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun setRealmConfig(realmConfig: RealmConfiguration) {
+        this.realmConfig = realmConfig
+    }
+
+    override fun getRealmConfig(): RealmConfiguration {
+        return realmConfig
+    }
+
+    override fun exit(){
+        finish()
     }
 }
