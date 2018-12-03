@@ -3,9 +3,12 @@ package xyz.willnwalker.yetanotherpasswordmanager
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.InputType
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.URLUtil
+import android.widget.Toast
 import androidx.navigation.Navigation.findNavController
 import io.realm.Realm
 import io.realm.RealmConfiguration
@@ -129,25 +132,40 @@ class PasswordViewFragment : Fragment() {
         //Test cases
         var content = ""
         //Check for invalid entries
+
         if (passwordTextField.text.toString() != passwordTextField2.text.toString()) {
             content = "Please make sure that your passwords match"
         }
-        if (passwordTextField.text.toString() == ""){
+        if (passwordTextField.text.toString() == "") {
             content = "Please enter a password for your account"
         }
         if(serviceName.text.toString() == "") {
             content = "Please enter a title for your account"
         }
-        return if(content != "")
+
+
+        //validateWith function to change the underline color for each edit text field
+        serviceName.validateWith(null, null) { textView -> textView.text.isNotEmpty()}
+        passwordTextField.validateWith(null,null) {textView -> textView.text.isNotEmpty()}
+        passwordTextField2.validateWith(null,null) {textView -> textView.text.toString() == passwordTextField.text.toString()}
+        if(url.text.toString() != "") url.validateWith(null,null) {textView -> validURL(textView.text.toString())}
+
+
+        return if(content == "")
             true
-        else{
-            //Create alert dialog
-            MaterialDialog.Builder(context!!)
-                    .positiveText("Okay")
-                    .content(content)
-                    .show()
+        else {
+            val toast = Toast.makeText(context!!, content, Toast.LENGTH_SHORT)
+            toast.show()
             false
         }
+    }
+
+    private fun validURL(url: String): Boolean {
+        if(URLUtil.isValidUrl(url)) {
+            if (Patterns.WEB_URL.matcher(url).matches())
+                return true
+        }
+        return false
     }
 
 }
