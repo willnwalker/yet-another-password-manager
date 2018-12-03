@@ -4,9 +4,12 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.InputType
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.URLUtil
+import android.widget.Toast
 import androidx.navigation.Navigation.findNavController
 import io.realm.Realm
 import io.realm.RealmConfiguration
@@ -17,7 +20,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.kotlin.where
 import android.graphics.drawable.Drawable
 import android.support.v4.content.res.ResourcesCompat
-import android.widget.Toast
 
 
 /**
@@ -64,9 +66,9 @@ class PasswordViewFragment : Fragment() {
                     .title("Generate Password")
                     .content("Specify password length:")
                     .inputType(InputType.TYPE_CLASS_NUMBER)
-                    .inputRange(0,2)
-                    .input("Password Length", null){dialog: MaterialDialog, input: CharSequence  ->
-                        val pass = genPassword(input.toString().toInt(), dialog.isPromptCheckBoxChecked)
+                    .inputRange(1,2)
+                    .input(null, "12") { dialog: MaterialDialog, input: CharSequence  ->
+                        var pass = genPassword(input.toString().toInt(), dialog.isPromptCheckBoxChecked)
                         passwordTextField.setText(pass)
                         passwordTextField2.setText(pass)
                     }
@@ -79,7 +81,7 @@ class PasswordViewFragment : Fragment() {
 
     private fun initSaveClickListener(entry: Entry){
         button_save.setOnClickListener {
-            if(validateEntries()){
+            if(validateEntries()) {
                 realm.beginTransaction()
 
                 entry.title = serviceName.text.toString()
@@ -137,23 +139,32 @@ class PasswordViewFragment : Fragment() {
         //Test cases
         var content = ""
         //Check for invalid entries
+        if(url.text.toString() != "" && !isValidURL(url.text.toString())){
+            content = "Please enter a valid URL"
+        }
         if (passwordTextField.text.toString() != passwordTextField2.text.toString()) {
             content = "Please make sure that your passwords match."
         }
-        if (passwordTextField.text.toString() == ""){
-            content = "Please enter a password for your account."
+        if (passwordTextField.text.toString() == "") {
+            content = "Please enter a password for your account"
         }
         if(serviceName.text.toString() == "") {
             content = "Please enter a title for your account."
         }
+
+
+        //validateWith function to change the underline color for each edit text field
+        serviceName.validateWith(null, null) { textView -> textView.text.isNotEmpty()}
+        passwordTextField.validateWith(null,null) {textView -> textView.text.isNotEmpty()}
+        passwordTextField2.validateWith(null,null) {textView -> textView.text.toString() == passwordTextField.text.toString()}
+        if(url.text.toString() != "") url.validateWith(null,null) {textView -> isValidURL(textView.text.toString())}
+
+
         return if(content == "")
             true
-        else{
-            //Create alert dialog
-            MaterialDialog.Builder(contextConfirmed)
-                    .positiveText("Okay")
-                    .content(content)
-                    .show()
+        else {
+            val toast = Toast.makeText(contextConfirmed, content, Toast.LENGTH_SHORT)
+            toast.show()
             false
         }
     }
@@ -164,6 +175,14 @@ class PasswordViewFragment : Fragment() {
         contextConfirmed = _context
         uiListener = contextConfirmed as UIListener
         realmConfig = uiListener.getRealmConfig()
+    }
+
+    private fun isValidURL(url: String): Boolean {
+        //if(URLUtil.isValidUrl(url)) {
+            if (Patterns.WEB_URL.matcher(url).matches())
+                return true
+        //}
+        return false
     }
 
 }
