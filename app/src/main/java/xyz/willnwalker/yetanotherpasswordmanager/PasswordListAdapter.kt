@@ -12,6 +12,7 @@ import androidx.navigation.Navigation.findNavController
 import io.realm.*
 import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.kotlin.deleteFromRealm
+import org.w3c.dom.Text
 
 class PasswordListAdapter(
         context: Context,
@@ -63,13 +64,20 @@ class PasswordListAdapter(
         //set list item onclicklistener here
         holder.container.setOnClickListener {
             val entry = data[position] as Entry
-            MaterialDialog.Builder(context)
-                    .title(entry.title)
+
+            var dialog : MaterialDialog = MaterialDialog.Builder(context)
+                    //.title(entry.title)
                     .autoDismiss(false)
+                    .customView(R.layout.password_view_dialog, true)
+
+
+/*
                     .content("Username: " + entry.userName
                             + "\n" + "Password: " + entry.password
                             + "\n"  + "Notes: " + entry.notes
                             + "\n"  + "URL: " + entry.url)
+                    */
+
                     .positiveText("Edit")
                     .onPositive{ dialog, _ ->
                         dialog.dismiss()
@@ -96,6 +104,28 @@ class PasswordListAdapter(
                                 .show()
                     }
                     .show()
+
+            val customView = dialog.customView
+            val serviceName: TextView = customView!!.findViewById(R.id.title)
+            val username: TextView = customView.findViewById(R.id.username)
+            val password: TextView = customView.findViewById(R.id.password)
+            val notes: TextView = customView.findViewById(R.id.notes)
+            val url: TextView = customView.findViewById(R.id.url)
+
+            /*serviceName.text = entry.title
+            username.text = entry.userName
+            password.text = entry.password
+            notes.text = entry.notes
+            url.text = entry.url*/
+
+            serviceName.text = entry.title
+            username.append(" " + entry.userName)
+            password.append(" " + entry.password)
+            notes.append(" " + entry.notes)
+            url.append(" " + entry.url)
+
+            dialog.show()
+            
         }
     }
 
