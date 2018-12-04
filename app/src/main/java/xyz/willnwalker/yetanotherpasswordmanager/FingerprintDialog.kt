@@ -189,10 +189,10 @@ class FingerprintDialog : DialogFragment(), FingerprintController.Callback {
             else -> {
                 MaterialDialog.Builder(contextConfirmed)
                         .title("Failure!")
-                        .content("Fingerprint authentication was not successful. Exiting")
+                        .content("Fingerprint authentication was not successful. Exiting.")
                         .positiveText("Okay")
+                        .onAny { _, _ -> uiListener.exit() }
                         .show()
-                uiListener.exit()
             }
         }
     }
