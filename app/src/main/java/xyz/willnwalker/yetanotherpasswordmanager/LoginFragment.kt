@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.afollestad.materialdialogs.MaterialDialog
+import io.realm.RealmConfiguration
 
 
 /**
@@ -20,6 +21,7 @@ import com.afollestad.materialdialogs.MaterialDialog
  */
 class LoginFragment : Fragment(){
 
+    private lateinit var uiListener: UIListener
     private lateinit var contextConfirmed : Context
     private lateinit var prefs: SharedPreferences
     private lateinit var viewConfirmed: View
@@ -55,6 +57,7 @@ class LoginFragment : Fragment(){
     override fun onAttach(_context: Context){
         super.onAttach(context)
         contextConfirmed = _context
+        uiListener = contextConfirmed as UIListener
     }
 
     private fun showSetupFlow(){
@@ -82,6 +85,7 @@ class LoginFragment : Fragment(){
                 .onNegative{_, _ ->
                     prefs.edit().putBoolean("firstRun",false).apply()
                     prefs.edit().putBoolean("securityEnabled",false).apply()
+                    uiListener.setRealmConfig(RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build())
                     showLaterMessage("")
                 }
                 .show()
