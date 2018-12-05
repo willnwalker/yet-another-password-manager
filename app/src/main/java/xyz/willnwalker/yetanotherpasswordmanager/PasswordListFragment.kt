@@ -29,6 +29,8 @@ class PasswordListFragment : Fragment() {
     private var securityEnabled = false
     private lateinit var uiListener: UIListener
     private lateinit var realmConfig: RealmConfiguration
+    private lateinit var passwordListAdapter: PasswordListAdapter
+    private lateinit var realm: Realm
 
     // Kyle: initialize linearLayoutManager
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -50,16 +52,11 @@ class PasswordListFragment : Fragment() {
         // Kyle: adds a horizontal line separator between each item
         passwordList.addItemDecoration(PasswordListItemDecoration(contextConfirmed, 40, 40))
 
-//        val config: RealmConfiguration = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build()
-        val realm = Realm.getInstance(realmConfig)
+        realm = Realm.getInstance(realmConfig)
         val entries = realm.where<Entry>().findAllAsync()
-        passwordList.setAdapter(PasswordListAdapter(realmConfig, contextConfirmed, entries, true, false, ""))
+        passwordListAdapter = PasswordListAdapter(realmConfig, contextConfirmed, entries, true, false, "")
+        passwordList.setAdapter(passwordListAdapter)
 
-    }
-
-    override fun onResume() {
-        super.onResume()
-//        uiListener.toggleOptionsMenu()
     }
 
     // Need this because context doesn't exist until fragment attached to navigation controller
@@ -83,6 +80,19 @@ class PasswordListFragment : Fragment() {
             }
         }
         this.realmConfig = uiListener.getRealmConfig()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        passwordListAdapter.onPause()
+        fragment_password_list.visibility = View.INVISIBLE
+        realm.close()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        passwordListAdapter.onResume()
+        realm = Realm.getInstance(realmConfig)
     }
 
 }

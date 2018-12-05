@@ -1,7 +1,6 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
 import android.content.Context
-import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.LayoutInflater
 import android.view.View
@@ -15,8 +14,15 @@ import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.kotlin.deleteFromRealm
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.support.v4.content.ContextCompat.getSystemService
+import android.text.SpannableString
+import android.text.style.ClickableSpan
 import kotlinx.android.synthetic.main.password_view_dialog.view.*
+import android.content.Intent
+import android.net.Uri
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.method.ScrollingMovementMethod
+import android.webkit.URLUtil
 
 class PasswordListAdapter(
         realmConfig: RealmConfiguration,
@@ -31,10 +37,12 @@ class PasswordListAdapter(
         animateIdType,
         animateExtraColumnName){
 
-    private val realm = Realm.getInstance(realmConfig)
-
+    private val realmConfig = realmConfig
+    private var realm = Realm.getInstance(this.realmConfig)
     private lateinit var clipboard: ClipboardManager
     private var clip: ClipData? = null
+    private lateinit var lastDialog: MaterialDialog
+    private var lastDialogAvailable = false
 
     /**
      * Provide a suitable constructor (depends on the kind of dataset)
@@ -73,7 +81,7 @@ class PasswordListAdapter(
         holder.container.setOnClickListener {
             val entry = data[position] as Entry
 
-            var dialog : MaterialDialog = MaterialDialog.Builder(context)
+            lastDialog = MaterialDialog.Builder(context)
                     //.title(entry.title)
                     .autoDismiss(false)
                     .customView(R.layout.password_view_dialog, true)
@@ -101,7 +109,7 @@ class PasswordListAdapter(
                     }
                     .show()
 
-            val customView = dialog.customView
+            val customView = lastDialog.customView
             val serviceName: TextView = customView!!.findViewById(R.id.title)
             val username: TextView = customView.findViewById(R.id.username)
             val password: TextView = customView.findViewById(R.id.password)
@@ -109,18 +117,34 @@ class PasswordListAdapter(
             val url: TextView = customView.findViewById(R.id.url)
 
             serviceName.text = entry.title
-            username.append(" " + entry.userName)
-            password.append(" " + entry.password)
-            notes.append(" " + entry.notes)
-            url.append(" " + entry.url)
+            username.append(entry.userName)
+            password.movementMethod = ScrollingMovementMethod()
+            password.append(entry.password)
+            notes.append(entry.notes)
 
-            dialog.show()
+            val spannableString = SpannableString("URL: "+entry.url)
+            val clickableSpan = object: ClickableSpan(){
+                override fun onClick(textView: View) {
+                    var urlUri = Uri.parse(entry.url)
+                    if(!URLUtil.isValidUrl(entry.url)){
+                        urlUri = Uri.parse("http://"+entry.url)
+                    }
+                    val intent = Intent(Intent.ACTION_VIEW, urlUri)
+                    context.startActivity(intent)
+                }
+            }
+            spannableString.setSpan(clickableSpan, 5, 5+entry.url.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            url.text = spannableString
+            url.movementMethod = LinkMovementMethod.getInstance()
 
             customView.button_copy_password.setOnClickListener {
                 clip = ClipData.newPlainText("password", entry.password)
                 clipboard.primaryClip = clip
-                Toast.makeText(context, "Password Copied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Password Copied!", Toast.LENGTH_SHORT).show()
             }
+
+            lastDialogAvailable = true
+            lastDialog.show()
 
         }
     }
@@ -130,5 +154,15 @@ class PasswordListAdapter(
         return data.size
     }
 
+    fun onPause(){
+        if(lastDialogAvailable){
+            lastDialog.dismiss()
+        }
+        realm.close()
+    }
+
+    fun onResume(){
+        realm = Realm.getInstance(realmConfig)
+    }
 
 }

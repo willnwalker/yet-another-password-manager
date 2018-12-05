@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity(), UIListener{
         Realm.init(applicationContext)
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
         nav = Navigation.findNavController(this, R.id.nav_host)
+        firstRun = prefs.getBoolean("firstRun", true)
+        securityEnabled = prefs.getBoolean("securityEnabled", false)
 
     }
 
@@ -37,6 +39,9 @@ class MainActivity : AppCompatActivity(), UIListener{
 
         firstRun = prefs.getBoolean("firstRun", true)
         securityEnabled = prefs.getBoolean("securityEnabled", false)
+
+        nav.navigate(R.id.loadingFragment)
+
         when{
             firstRun || securityEnabled -> nav.navigate(R.id.loginFragment)
             else -> nav.navigate(R.id.passwordListFragment)
@@ -46,6 +51,12 @@ class MainActivity : AppCompatActivity(), UIListener{
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
+        if(!firstRun){
+            if(!securityEnabled){
+                menu.findItem(R.id.action_settings).title = "Enable Encryption"
+            }
+            //TODO: Set Settings action to decrypt if security enabled
+        }
         return true
     }
 
@@ -54,7 +65,10 @@ class MainActivity : AppCompatActivity(), UIListener{
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
-            R.id.action_settings -> return true
+            R.id.action_settings -> {
+                nav.navigate(R.id.loginFragment)
+                return true
+            }
             else -> return super.onOptionsItemSelected(item)
         }
     }

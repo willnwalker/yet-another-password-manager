@@ -47,8 +47,11 @@ class LoginFragment : Fragment(){
         val securityEnabled = prefs.getBoolean("securityEnabled", false)
 
         when{
-            firstRun -> showSetupFlow()
+            firstRun -> showSetupFlow("setup")
             securityEnabled -> showAuthFlow()
+            !firstRun && !securityEnabled -> {
+                showSetupFlow("migrate")
+            }
         }
 
     }
@@ -60,7 +63,7 @@ class LoginFragment : Fragment(){
         uiListener = contextConfirmed as UIListener
     }
 
-    private fun showSetupFlow(){
+    private fun showSetupFlow(flow: String){
         MaterialDialog.Builder(contextConfirmed)
                 .title("Welcome!")
                 .content(R.string.setup_login_dialog_message)
@@ -74,7 +77,7 @@ class LoginFragment : Fragment(){
                             val dialog = FingerprintDialog.newInstance(
                                     "Sign In",
                                     "Confirm fingerprint to enable security.",
-                                    "setup",
+                                    flow,
                                     nav
                             )
                             dialog.show(fragmentManager, FingerprintDialog.FRAGMENT_TAG)

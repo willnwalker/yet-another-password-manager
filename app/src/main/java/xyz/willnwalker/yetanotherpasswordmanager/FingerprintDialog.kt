@@ -16,8 +16,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.NavController
 import com.afollestad.materialdialogs.MaterialDialog
+import io.realm.Realm
 import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.dialog_fingerprint.*
+import java.io.File
 import java.io.IOException
 import java.security.*
 import java.security.cert.CertificateException
@@ -138,11 +140,11 @@ class FingerprintDialog : DialogFragment(), FingerprintController.Callback {
 
     override fun onAuthenticated() {
 
-        MaterialDialog.Builder(contextConfirmed)
-                .title("Success!")
-                .content("Authenticated with fingerprint successfully.")
-                .positiveText("Okay")
-                .show()
+//        MaterialDialog.Builder(contextConfirmed)
+//                .title("Success!")
+//                .content("Authenticated with fingerprint successfully.")
+//                .positiveText("Okay")
+//                .show()
         this.dismiss()
         when{
             flow.equals("setup") -> {
@@ -159,6 +161,27 @@ class FingerprintDialog : DialogFragment(), FingerprintController.Callback {
                 prefs.edit().putString("RealmKey", Base64.encodeToString(key, Base64.NO_WRAP)).apply()
                 buildConfig(key)
                 prefs.edit().putBoolean("firstRun",false).apply()
+                prefs.edit().putBoolean("securityEnabled",true).apply()
+                nav.navigate(R.id.action_loginSetupFragment_to_passwordListFragment)
+
+            }
+            flow.equals("migrate") -> {
+                val key = ByteArray(64)
+                SecureRandom().nextBytes(key)
+                prefs.edit().putString("RealmKey", Base64.encodeToString(key, Base64.NO_WRAP)).apply()
+
+
+                val oldRealm = Realm.getInstance(uiListener.getRealmConfig())
+                val path = uiListener.getRealmConfig().path
+                File(path+"temp_realm").delete()
+                oldRealm.writeEncryptedCopyTo(File(path+"temp_realm"),key)
+                oldRealm.close()
+                Realm.deleteRealm(uiListener.getRealmConfig())
+
+                val tempRealm = Realm.getInstance(RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().directory(File(path+"temp_realm")).encryptionKey(key).build())
+                tempRealm.writeCopyTo(File(Realm.DEFAULT_REALM_NAME))
+
+                buildConfig(key)
                 prefs.edit().putBoolean("securityEnabled",true).apply()
                 nav.navigate(R.id.action_loginSetupFragment_to_passwordListFragment)
 
@@ -185,6 +208,15 @@ class FingerprintDialog : DialogFragment(), FingerprintController.Callback {
                         .positiveText("Okay")
                         .show()
                 uiListener.setRealmConfig(RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build())
+                nav.navigate(R.id.action_loginSetupFragment_to_passwordListFragment)
+            }
+            flow == "migrate" -> {
+                MaterialDialog.Builder(contextConfirmed)
+                        .title("Failure!")
+                        .content("Fingerprint authentication was not successful. Returning to password list.")
+                        .positiveText("Okay")
+                        .onAny { _, _ -> nav.navigate(R.id.passwordListFragment) }
+                        .show()
             }
             else -> {
                 MaterialDialog.Builder(contextConfirmed)
