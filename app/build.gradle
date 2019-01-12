@@ -32,7 +32,7 @@ android {
 //}
 
     dependencies {
-        def nav_version = "1.0.0-alpha07"
+        def nav_version = "1.0.0-alpha09"
 
         implementation "android.arch.navigation:navigation-fragment-ktx:$nav_version"
         // use -ktx for Kotlin
