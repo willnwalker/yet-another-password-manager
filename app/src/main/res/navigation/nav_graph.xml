@@ -3,23 +3,49 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/mainActivity">
-
-    <activity
-        android:id="@+id/mainActivity"
-        android:name="xyz.willnwalker.yetanotherpasswordmanager.MainActivity"
-        android:label="content_main"
-        tools:layout="@layout/content_main" />
+    app:startDestination="@id/loadingFragment">
 
     <fragment
         android:id="@+id/passwordListFragment"
         android:name="xyz.willnwalker.yetanotherpasswordmanager.PasswordListFragment"
         android:label="fragment_password_list"
-        tools:layout="@layout/fragment_password_list" />
+        tools:layout="@layout/fragment_password_list" >
+        <action
+            android:id="@+id/action_new_password"
+            app:destination="@id/passwordViewFragment"
+            app:enterAnim="@anim/nav_default_pop_enter_anim"
+            app:exitAnim="@anim/nav_default_pop_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" >
+            <argument
+                android:name="uuid"
+                android:defaultValue="new_password" />
+        </action>
+    </fragment>
 
     <fragment
         android:id="@+id/passwordViewFragment"
         android:name="xyz.willnwalker.yetanotherpasswordmanager.PasswordViewFragment"
         android:label="fragment_password_view"
-        tools:layout="@layout/fragment_password_view" />
+        tools:layout="@layout/fragment_password_view" >
+        <argument
+            android:name="uuid"
+            app:argType="string"
+            android:defaultValue="new_password" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="xyz.willnwalker.yetanotherpasswordmanager.LoginFragment"
+        android:label="LoginSetupFragment"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginSetupFragment_to_passwordListFragment"
+            app:destination="@id/passwordListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loadingFragment"
+        android:name="xyz.willnwalker.yetanotherpasswordmanager.LoadingFragment"
+        android:label="loadingFragment"
+        tools:layout="@layout/fragment_loading">
+    </fragment>
 </navigation>
