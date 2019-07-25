@@ -2,7 +2,7 @@ package xyz.willnwalker.yetanotherpasswordmanager
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.text.InputType
 import android.util.Patterns
 import android.view.LayoutInflater
@@ -19,14 +19,14 @@ import java.security.SecureRandom
 import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.kotlin.where
 import android.graphics.drawable.Drawable
-import android.support.v4.content.res.ResourcesCompat
+import androidx.core.content.res.ResourcesCompat
 
 
 /**
  * A simple [Fragment] subclass.
  *
  */
-class PasswordViewFragment : Fragment() {
+class PasswordViewFragment : androidx.fragment.app.Fragment() {
     private lateinit var contextConfirmed : Context
     private lateinit var uiListener: UIListener
     private lateinit var realmConfig: RealmConfiguration
@@ -41,7 +41,7 @@ class PasswordViewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         realm = Realm.getInstance(realmConfig)
-        val uuid = PasswordViewFragmentArgs.fromBundle(arguments).uuid
+        val uuid = PasswordViewFragmentArgs.fromBundle(arguments!!).uuid
 
         if(isNewPassword(uuid)){
             val entry = Entry()

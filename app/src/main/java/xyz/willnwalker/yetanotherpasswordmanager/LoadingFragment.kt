@@ -1,7 +1,7 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +10,7 @@ import android.view.ViewGroup
  * A simple [Fragment] subclass.
  *
  */
-class LoadingFragment : Fragment() {
+class LoadingFragment : androidx.fragment.app.Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

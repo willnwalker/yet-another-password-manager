@@ -8,8 +8,8 @@ import android.preference.PreferenceManager
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.KeyProperties
-import android.support.v4.app.DialogFragment
-import android.support.v4.hardware.fingerprint.FingerprintManagerCompat
+import androidx.fragment.app.DialogFragment
+import androidx.core.hardware.fingerprint.FingerprintManagerCompat
 import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
@@ -32,7 +32,7 @@ import javax.crypto.SecretKey
 /**
  * DialogFragment that prompts the user to authenticate their fingerprint.
  */
-class FingerprintDialog : DialogFragment(), FingerprintController.Callback {
+class FingerprintDialog : androidx.fragment.app.DialogFragment(), FingerprintController.Callback {
 
     private lateinit var contextConfirmed : Context
     private lateinit var nav: NavController

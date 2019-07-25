@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.v4.app.Fragment
-import android.support.v4.hardware.fingerprint.FingerprintManagerCompat
+import androidx.fragment.app.Fragment
+import androidx.core.hardware.fingerprint.FingerprintManagerCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +19,7 @@ import io.realm.RealmConfiguration
  * A simple [Fragment] subclass.
  *
  */
-class LoginFragment : Fragment(){
+class LoginFragment : androidx.fragment.app.Fragment(){
 
     private lateinit var uiListener: UIListener
     private lateinit var contextConfirmed : Context

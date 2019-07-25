@@ -3,8 +3,8 @@ package xyz.willnwalker.yetanotherpasswordmanager
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * Kyle: this class is used to add custom decorations to PasswordListFragment
@@ -13,7 +13,7 @@ class PasswordListItemDecoration(
         context: Context,
         val paddingLeft: Int,
         val paddingRight: Int
-) : RecyclerView.ItemDecoration() {
+) : androidx.recyclerview.widget.RecyclerView.ItemDecoration() {
 
     private var mDivider: Drawable? = null
 
@@ -27,7 +27,7 @@ class PasswordListItemDecoration(
      *
      * Actually draws the line divider
      */
-    override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+    override fun onDrawOver(c: Canvas, parent: androidx.recyclerview.widget.RecyclerView, state: androidx.recyclerview.widget.RecyclerView.State) {
         super.onDrawOver(c, parent, state)
 
         // sets right and left padding
@@ -37,7 +37,7 @@ class PasswordListItemDecoration(
         val childCount = parent.childCount
         for (i in 0 until childCount) {
             val child = parent.getChildAt(i) // Gets current child
-            val params = child.layoutParams as RecyclerView.LayoutParams // gets params for child
+            val params = child.layoutParams as androidx.recyclerview.widget.RecyclerView.LayoutParams // gets params for child
             val top = child.bottom + params.bottomMargin // gets top margin
             val bottom = top + (mDivider?.intrinsicHeight ?: 0) // gets bottom margin, if no mDivider, sets to 0
 
