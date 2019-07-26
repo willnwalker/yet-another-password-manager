@@ -21,9 +21,8 @@ import kotlinx.android.synthetic.main.fragment_password_list.*
  * A simple [Fragment] subclass.
  *
  */
-class PasswordListFragment : androidx.fragment.app.Fragment() {
+class PasswordListFragment : Fragment() {
 
-    private lateinit var contextConfirmed : Context
     private lateinit var prefs: SharedPreferences
     private var firstRun = true
     private var securityEnabled = false
@@ -50,21 +49,20 @@ class PasswordListFragment : androidx.fragment.app.Fragment() {
         linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
 
         // Kyle: adds a horizontal line separator between each item
-        passwordList.addItemDecoration(PasswordListItemDecoration(contextConfirmed, 40, 40))
+        passwordList.addItemDecoration(PasswordListItemDecoration(requireContext(), 40, 40))
 
         realm = Realm.getInstance(realmConfig)
         val entries = realm.where<Entry>().findAllAsync()
-        passwordListAdapter = PasswordListAdapter(realmConfig, contextConfirmed, entries, true, false, "")
+        passwordListAdapter = PasswordListAdapter(realmConfig, requireContext(), viewLifecycleOwner, entries, true, false, "")
         passwordList.setAdapter(passwordListAdapter)
 
     }
 
     // Need this because context doesn't exist until fragment attached to navigation controller
-    override fun onAttach(_context: Context){
+    override fun onAttach(context: Context){
         super.onAttach(context)
-        contextConfirmed = _context
-        uiListener = context as UIListener
-        prefs = PreferenceManager.getDefaultSharedPreferences(contextConfirmed)
+        uiListener = requireContext() as UIListener
+        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         firstRun = prefs.getBoolean("firstRun", true)
         securityEnabled = prefs.getBoolean("securityEnabled", false)
         when{

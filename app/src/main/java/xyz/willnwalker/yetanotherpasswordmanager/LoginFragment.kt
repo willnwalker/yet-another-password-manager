@@ -12,6 +12,8 @@ import android.view.ViewGroup
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.callbacks.onDismiss
+import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import io.realm.RealmConfiguration
 
 
@@ -19,10 +21,9 @@ import io.realm.RealmConfiguration
  * A simple [Fragment] subclass.
  *
  */
-class LoginFragment : androidx.fragment.app.Fragment(){
+class LoginFragment : Fragment(){
 
     private lateinit var uiListener: UIListener
-    private lateinit var contextConfirmed : Context
     private lateinit var prefs: SharedPreferences
     private lateinit var viewConfirmed: View
     private lateinit var nav: NavController
@@ -36,7 +37,7 @@ class LoginFragment : androidx.fragment.app.Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewConfirmed = view
-        prefs = PreferenceManager.getDefaultSharedPreferences(contextConfirmed)
+        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         nav = findNavController()
 
     }
@@ -57,41 +58,67 @@ class LoginFragment : androidx.fragment.app.Fragment(){
     }
 
     // Need this because context doesn't exist until fragment attached to navigation controller
-    override fun onAttach(_context: Context){
+    override fun onAttach(context: Context){
         super.onAttach(context)
-        contextConfirmed = _context
-        uiListener = contextConfirmed as UIListener
+        uiListener = requireContext() as UIListener
     }
 
     private fun showSetupFlow(flow: String){
-        MaterialDialog.Builder(contextConfirmed)
-                .title("Welcome!")
-                .content(R.string.setup_login_dialog_message)
-                .positiveText("Yes")
-                .onPositive { _, _ ->
-                    val manager = FingerprintManagerCompat.from(contextConfirmed)
-                    when {
-                        !manager.isHardwareDetected -> showLaterMessage("No Fingerprint reader detected. ")
-                        !manager.hasEnrolledFingerprints() -> showLaterMessage("No Fingerprints saved in phone. ")
-                        else -> {
-                            val dialog = FingerprintDialog.newInstance(
-                                    "Sign In",
-                                    "Confirm fingerprint to enable security.",
-                                    flow,
-                                    nav
-                            )
-                            dialog.show(fragmentManager, FingerprintDialog.FRAGMENT_TAG)
-                        }
+        MaterialDialog(requireContext()).show {
+            lifecycleOwner(viewLifecycleOwner)
+            title(text = "Welcome!")
+            message(R.string.setup_login_dialog_message)
+            positiveButton(text = "Yes"){
+                val manager = FingerprintManagerCompat.from(requireContext())
+                when {
+                    !manager.isHardwareDetected -> showLaterMessage("No Fingerprint reader detected. ")
+                    !manager.hasEnrolledFingerprints() -> showLaterMessage("No Fingerprints saved in phone. ")
+                    else -> {
+                        val dialog = FingerprintDialog.newInstance(
+                                "Sign In",
+                                "Confirm fingerprint to enable security.",
+                                flow,
+                                nav
+                        )
+                        dialog.show(requireFragmentManager(), FingerprintDialog.FRAGMENT_TAG)
                     }
                 }
-                .negativeText("No")
-                .onNegative{_, _ ->
-                    prefs.edit().putBoolean("firstRun",false).apply()
-                    prefs.edit().putBoolean("securityEnabled",false).apply()
-                    uiListener.setRealmConfig(RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build())
-                    showLaterMessage("")
-                }
-                .show()
+            }
+            negativeButton(text = "No"){
+                prefs.edit().putBoolean("firstRun",false).apply()
+                prefs.edit().putBoolean("securityEnabled",false).apply()
+                uiListener.setRealmConfig(RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build())
+                showLaterMessage("")
+            }
+        }
+//        MaterialDialog.Builder(requireContext())
+//                .title("Welcome!")
+//                .content(R.string.setup_login_dialog_message)
+//                .positiveText("Yes")
+//                .onPositive { _, _ ->
+//                    val manager = FingerprintManagerCompat.from(requireContext())
+//                    when {
+//                        !manager.isHardwareDetected -> showLaterMessage("No Fingerprint reader detected. ")
+//                        !manager.hasEnrolledFingerprints() -> showLaterMessage("No Fingerprints saved in phone. ")
+//                        else -> {
+//                            val dialog = FingerprintDialog.newInstance(
+//                                    "Sign In",
+//                                    "Confirm fingerprint to enable security.",
+//                                    flow,
+//                                    nav
+//                            )
+//                            dialog.show(requireFragmentManager(), FingerprintDialog.FRAGMENT_TAG)
+//                        }
+//                    }
+//                }
+//                .negativeText("No")
+//                .onNegative{_, _ ->
+//                    prefs.edit().putBoolean("firstRun",false).apply()
+//                    prefs.edit().putBoolean("securityEnabled",false).apply()
+//                    uiListener.setRealmConfig(RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build())
+//                    showLaterMessage("")
+//                }
+//                .show()
     }
 
     private fun showAuthFlow() {
@@ -101,17 +128,25 @@ class LoginFragment : androidx.fragment.app.Fragment(){
                 "auth",
                 nav
         )
-        dialog.show(fragmentManager, FingerprintDialog.FRAGMENT_TAG)
+        dialog.show(requireFragmentManager(), FingerprintDialog.FRAGMENT_TAG)
     }
 
     private fun showLaterMessage(extraMessage : String){
-        MaterialDialog.Builder(contextConfirmed)
-                .content(extraMessage + getString(R.string.setup_login_dialog_message_negative))
-                .positiveText("Okay")
-                .onPositive{_, _ ->
-                    nav.navigate(R.id.action_loginSetupFragment_to_passwordListFragment)
-                }
-                .show()
+        MaterialDialog(requireContext()).show {
+            lifecycleOwner(viewLifecycleOwner)
+            message(text = "$extraMessage You can always secure your passwords later. Just go to ...")
+            positiveButton(text = "Okay")
+            onDismiss {
+                nav.navigate(R.id.action_loginSetupFragment_to_passwordListFragment)
+            }
+        }
+//        MaterialDialog.Builder(requireContext())
+//                .content(extraMessage + getString(R.string.setup_login_dialog_message_negative))
+//                .positiveText("Okay")
+//                .onPositive{_, _ ->
+//                    nav.navigate(R.id.action_loginSetupFragment_to_passwordListFragment)
+//                }
+//                .show()
     }
 
 }

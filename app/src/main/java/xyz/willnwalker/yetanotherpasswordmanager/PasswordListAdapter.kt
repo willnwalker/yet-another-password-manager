@@ -23,10 +23,15 @@ import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.method.ScrollingMovementMethod
 import android.webkit.URLUtil
+import androidx.lifecycle.LifecycleOwner
+import com.afollestad.materialdialogs.customview.customView
+import com.afollestad.materialdialogs.customview.getCustomView
+import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 
 class PasswordListAdapter(
-        realmConfig: RealmConfiguration,
+        private val realmConfig: RealmConfiguration,
         context: Context,
+        private val lifecycleOwner: LifecycleOwner,
         private val data: RealmResults<Entry>,
         automaticUpdate: Boolean,
         animateIdType: Boolean,
@@ -37,8 +42,7 @@ class PasswordListAdapter(
         animateIdType,
         animateExtraColumnName){
 
-    private val realmConfig = realmConfig
-    private var realm = Realm.getInstance(this.realmConfig)
+    private var realm = Realm.getInstance(realmConfig)
     private lateinit var clipboard: ClipboardManager
     private var clip: ClipData? = null
     private lateinit var lastDialog: MaterialDialog
@@ -78,39 +82,63 @@ class PasswordListAdapter(
         clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         holder.mTextView.text = data[position]!!.title
         //set list item onclicklistener here
-        holder.container.setOnClickListener {
+        holder.container.setOnClickListener {container ->
             val entry = data[position] as Entry
 
-            lastDialog = MaterialDialog.Builder(context)
-                    //.title(entry.title)
-                    .autoDismiss(false)
-                    .customView(R.layout.password_view_dialog, true)
-
-                    .positiveText("Edit")
-                    .onPositive{ dialog, _ ->
-                        dialog.dismiss()
-                        val args = PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id)
-                        findNavController(it).navigate(args)
+            val lastDialog = MaterialDialog(context).show {
+                lifecycleOwner(lifecycleOwner)
+                noAutoDismiss()
+                customView(R.layout.password_view_dialog)
+                positiveButton(text = "Edit"){
+                    it.dismiss()
+                    val args = PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id)
+                    findNavController(container).navigate(args)
+                }
+                negativeButton(text = "Delete"){
+                    MaterialDialog(context).show {
+                        lifecycleOwner(lifecycleOwner)
+                        title(text = "Are you sure you want to delete this entry?")
+                        positiveButton(text = "Yes"){
+                            it.dismiss()
+                            realm.beginTransaction()
+                            entry.deleteFromRealm()
+                            realm.commitTransaction()
+                            Snackbar.make(container, "Password Deleted.", Snackbar.LENGTH_LONG).show()
+                        }
+                        negativeButton(text = "No")
                     }
-                    .negativeText("Delete")
-                    .onNegative { dialog, _ ->
-                        MaterialDialog.Builder(context)
-                                .title("Are you sure you want to delete this entry?")
-                                .positiveText("Yes")
-                                .onPositive{_, _ ->
-                                    dialog.dismiss()
-                                    realm.beginTransaction()
-                                    entry.deleteFromRealm()
-                                    realm.commitTransaction()
-                                    Snackbar.make(it, "Password Deleted.", Snackbar.LENGTH_LONG).show()
-                                }
-                                .negativeText("No")
-                                .show()
-                    }
-                    .show()
+                }
+            }
+//            lastDialog = MaterialDialog.Builder(context)
+//                    //.title(entry.title)
+//                    .autoDismiss(false)
+//                    .customView(R.layout.password_view_dialog, true)
+//
+//                    .positiveText("Edit")
+//                    .onPositive{ dialog, _ ->
+//                        dialog.dismiss()
+//                        val args = PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id)
+//                        findNavController(it).navigate(args)
+//                    }
+//                    .negativeText("Delete")
+//                    .onNegative { dialog, _ ->
+//                        MaterialDialog.Builder(context)
+//                                .title("Are you sure you want to delete this entry?")
+//                                .positiveText("Yes")
+//                                .onPositive{_, _ ->
+//                                    dialog.dismiss()
+//                                    realm.beginTransaction()
+//                                    entry.deleteFromRealm()
+//                                    realm.commitTransaction()
+//                                    Snackbar.make(it, "Password Deleted.", Snackbar.LENGTH_LONG).show()
+//                                }
+//                                .negativeText("No")
+//                                .show()
+//                    }
+//                    .show()
 
-            val customView = lastDialog.customView
-            val serviceName: TextView = customView!!.findViewById(R.id.title)
+            val customView = lastDialog.getCustomView()
+            val serviceName: TextView = customView.findViewById(R.id.title)
             val username: TextView = customView.findViewById(R.id.username)
             val password: TextView = customView.findViewById(R.id.password)
             val notes: TextView = customView.findViewById(R.id.notes)
@@ -139,7 +167,7 @@ class PasswordListAdapter(
 
             customView.button_copy_password.setOnClickListener {
                 clip = ClipData.newPlainText("password", entry.password)
-                clipboard.primaryClip = clip
+                clipboard.setPrimaryClip(clip!!)
                 Toast.makeText(context, "Password Copied!", Toast.LENGTH_SHORT).show()
             }
 

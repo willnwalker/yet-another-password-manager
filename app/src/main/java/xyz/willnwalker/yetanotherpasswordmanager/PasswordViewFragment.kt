@@ -20,6 +20,8 @@ import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.kotlin.where
 import android.graphics.drawable.Drawable
 import androidx.core.content.res.ResourcesCompat
+import com.afollestad.materialdialogs.input.input
+import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 
 
 /**
@@ -27,7 +29,6 @@ import androidx.core.content.res.ResourcesCompat
  *
  */
 class PasswordViewFragment : androidx.fragment.app.Fragment() {
-    private lateinit var contextConfirmed : Context
     private lateinit var uiListener: UIListener
     private lateinit var realmConfig: RealmConfiguration
     private lateinit var realm : Realm
@@ -62,20 +63,36 @@ class PasswordViewFragment : androidx.fragment.app.Fragment() {
         }
 
         button_genpassword.setOnClickListener{
-            MaterialDialog.Builder(contextConfirmed)
-                    .title("Generate Password")
-                    .content("Specify password length:")
-                    .inputType(InputType.TYPE_CLASS_NUMBER)
-                    .inputRange(1,2)
-                    .input(null, "12") { dialog: MaterialDialog, input: CharSequence  ->
-                        var pass = genPassword(input.toString().toInt(), dialog.isPromptCheckBoxChecked)
-                        passwordTextField.setText(pass)
-                        passwordTextField2.setText(pass)
-                    }
-                    .positiveText("Generate")
-                    .negativeText("Cancel")
-                    .checkBoxPrompt("Allow Special Characters?", true, null)
-                    .show()
+            MaterialDialog(requireContext()).show {
+                lifecycleOwner(viewLifecycleOwner)
+                input(
+                        allowEmpty = false,
+                        inputType = InputType.TYPE_CLASS_NUMBER,
+                        maxLength = 2
+                ){ _, text ->
+                    val pass = genPassword(text.toString().toInt(), false)
+                    passwordTextField.setText(pass)
+                    passwordTextField2.setText(pass)
+                }
+                title(text = "Generate Password")
+                message(text = "Specify password length:")
+                positiveButton(text = "Generate")
+                negativeButton(text = "Cancel")
+            }
+//            MaterialDialog.Builder(contextConfirmed)
+//                    .title("Generate Password")
+//                    .content("Specify password length:")
+//                    .inputType(InputType.TYPE_CLASS_NUMBER)
+//                    .inputRange(1,2)
+//                    .input(null, "12") { dialog: MaterialDialog, input: CharSequence  ->
+//                        var pass = genPassword(input.toString().toInt(), dialog.isPromptCheckBoxChecked)
+//                        passwordTextField.setText(pass)
+//                        passwordTextField2.setText(pass)
+//                    }
+//                    .positiveText("Generate")
+//                    .negativeText("Cancel")
+//                    .checkBoxPrompt("Allow Special Characters?", true, null)
+//                    .show()
         }
     }
 
@@ -163,17 +180,16 @@ class PasswordViewFragment : androidx.fragment.app.Fragment() {
         return if(content == "")
             true
         else {
-            val toast = Toast.makeText(contextConfirmed, content, Toast.LENGTH_SHORT)
+            val toast = Toast.makeText(requireContext(), content, Toast.LENGTH_SHORT)
             toast.show()
             false
         }
     }
 
     // Need this because context doesn't exist until fragment attached to navigation controller
-    override fun onAttach(_context: Context){
-        super.onAttach(_context)
-        contextConfirmed = _context
-        uiListener = contextConfirmed as UIListener
+    override fun onAttach(context: Context){
+        super.onAttach(context)
+        uiListener = requireContext() as UIListener
         realmConfig = uiListener.getRealmConfig()
     }
 

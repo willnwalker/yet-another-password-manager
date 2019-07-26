@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
  */
 class PasswordListItemDecoration(
         context: Context,
-        val paddingLeft: Int,
-        val paddingRight: Int
-) : androidx.recyclerview.widget.RecyclerView.ItemDecoration() {
+        private val paddingLeft: Int,
+        private val paddingRight: Int
+) : RecyclerView.ItemDecoration() {
 
     private var mDivider: Drawable? = null
 
