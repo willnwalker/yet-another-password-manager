@@ -59,5 +59,7 @@ android {
         implementation "com.afollestad.material-dialogs:core:$dialogs_version"
         implementation "com.afollestad.material-dialogs:input:$dialogs_version"
         implementation "com.afollestad.material-dialogs:lifecycle:$dialogs_version"
+
+        implementation 'androidx.biometric:biometric:1.0.0-alpha04'
     }
 }
