@@ -8,7 +8,6 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.navigation.Navigation.findNavController
 import io.realm.Realm
@@ -18,8 +17,6 @@ import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.kotlin.where
-import android.graphics.drawable.Drawable
-import androidx.core.content.res.ResourcesCompat
 import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 
@@ -28,7 +25,7 @@ import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
  * A simple [Fragment] subclass.
  *
  */
-class PasswordViewFragment : androidx.fragment.app.Fragment() {
+class PasswordViewFragment : Fragment() {
     private lateinit var uiListener: UIListener
     private lateinit var realmConfig: RealmConfiguration
     private lateinit var realm : Realm
