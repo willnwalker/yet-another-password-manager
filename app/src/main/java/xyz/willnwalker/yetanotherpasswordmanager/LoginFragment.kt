@@ -25,7 +25,6 @@ class LoginFragment : Fragment(){
 
     private lateinit var uiListener: UIListener
     private lateinit var prefs: SharedPreferences
-    private lateinit var viewConfirmed: View
     private lateinit var nav: NavController
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -36,7 +35,6 @@ class LoginFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewConfirmed = view
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         nav = findNavController()
 
