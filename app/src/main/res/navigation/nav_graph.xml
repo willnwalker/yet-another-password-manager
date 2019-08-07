@@ -21,6 +21,9 @@
                 android:name="uuid"
                 android:defaultValue="new_password" />
         </action>
+        <action
+            android:id="@+id/action_passwordListFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
 
     <fragment
@@ -48,4 +51,8 @@
         android:label="loadingFragment"
         tools:layout="@layout/fragment_loading">
     </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="xyz.willnwalker.yetanotherpasswordmanager.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>

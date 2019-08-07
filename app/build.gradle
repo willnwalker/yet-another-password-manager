@@ -61,6 +61,11 @@ android {
         implementation "com.afollestad.material-dialogs:lifecycle:$dialogs_version"
 
         implementation 'androidx.biometric:biometric:1.0.0-alpha04'
-        implementation 'com.venmo.android.pin:library:0.2@aar'
+        implementation 'androidx.preference:preference:1.1.0-rc01'
+        implementation 'com.venmo.android.pin:library:1.2.0@aar'
     }
+}
+
+dependencies {
+    implementation 'androidx.legacy:legacy-support-v4:+'
 }

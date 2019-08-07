@@ -12,12 +12,11 @@ import androidx.navigation.Navigation
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.activity_main.*
-import com.venmo.android.pin.PinFragment
+import com.venmo.android.pin.PinListener
+import com.venmo.android.pin.PinSupportFragment
 import com.venmo.android.pin.util.PinHelper
 
-
-
-class MainActivity : AppCompatActivity(), UIListener, PinFragment.Listener{
+class MainActivity : AppCompatActivity(), UIListener, PinListener{
 
     private lateinit var prefs : SharedPreferences
     private lateinit var nav : NavController
@@ -56,12 +55,6 @@ class MainActivity : AppCompatActivity(), UIListener, PinFragment.Listener{
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
-//        if(!firstRun){
-            if(!securityEnabled){
-                menu.findItem(R.id.action_settings).title = "Enable Encryption"
-            }
-            //TODO: Set Settings action to decrypt if security enabled
-//        }
         return true
     }
 
@@ -71,15 +64,17 @@ class MainActivity : AppCompatActivity(), UIListener, PinFragment.Listener{
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
             R.id.action_settings -> {
-//                nav.navigate(R.id.loginFragment)
-                val toShow = if (PinHelper.hasDefaultPinSaved(this))
-                    PinFragment.newInstanceForVerification()
-                else
-                    PinFragment.newInstanceForCreation()
-
-                fragmentManager.beginTransaction()
-                        .replace(R.id.nav_host, toShow)
-                        .commit()
+                nav.navigate(R.id.action_passwordListFragment_to_settingsFragment)
+//                val pinFragment = if (PinHelper.hasDefaultPinSaved(this))
+//                    PinSupportFragment.newInstanceForVerification()
+//                else
+//                    PinSupportFragment.newInstanceForCreation()
+//
+//                supportFragmentManager.beginTransaction()
+////                        .remove(nav_host)
+//                        .replace(R.id.nav_host, pinFragment)
+//                        .addToBackStack(null)
+//                        .commit()
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
@@ -99,11 +94,11 @@ class MainActivity : AppCompatActivity(), UIListener, PinFragment.Listener{
     }
 
     override fun onPinCreated() {
-        nav.popBackStack()
+        nav.navigateUp()
     }
 
     override fun onValidated() {
         Toast.makeText(this,"Correct PIN!", Toast.LENGTH_SHORT).show()
-        nav.popBackStack()
+        nav.navigateUp()
     }
 }
