@@ -4,9 +4,10 @@
     <SwitchPreference
         android:defaultValue="false"
         android:key="securityEnabled"
-        android:title="Enable Encryption" />
-    <CheckBoxPreference
+        android:title="Enable Encryption with PIN" />
+    <SwitchPreference
         android:defaultValue="false"
-        android:key="check_box_preference_2"
-        android:title="Check box preference" />
+        android:key="fingerprintEnabled"
+        android:title="Use fingerprint instead of PIN to unlock passwords." />
+
 </PreferenceScreen>

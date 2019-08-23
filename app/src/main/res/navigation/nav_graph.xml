@@ -35,6 +35,9 @@
             android:name="uuid"
             app:argType="string"
             android:defaultValue="new_password" />
+        <action
+            android:id="@+id/action_passwordViewFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"

@@ -1,23 +1,24 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.activity_main.*
 import com.venmo.android.pin.PinListener
-import com.venmo.android.pin.PinSupportFragment
-import com.venmo.android.pin.util.PinHelper
+
 
 class MainActivity : AppCompatActivity(), UIListener, PinListener{
 
+    private lateinit var viewModel: SharedViewModel
     private lateinit var prefs : SharedPreferences
     private lateinit var nav : NavController
     private lateinit var realmConfig: RealmConfiguration
@@ -31,7 +32,8 @@ class MainActivity : AppCompatActivity(), UIListener, PinListener{
         setSupportActionBar(toolbar)
         // initialize Realm
         Realm.init(applicationContext)
-        prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        viewModel = ViewModelProviders.of(this)[SharedViewModel::class.java]
+        prefs = getPreferences(Context.MODE_PRIVATE)
         nav = Navigation.findNavController(this, R.id.nav_host)
         firstRun = prefs.getBoolean("firstRun", true)
         securityEnabled = prefs.getBoolean("securityEnabled", false)
@@ -42,6 +44,8 @@ class MainActivity : AppCompatActivity(), UIListener, PinListener{
         super.onResume()
 
         firstRun = prefs.getBoolean("firstRun", true)
+        Toast.makeText(this, "firstRun: $firstRun", Toast.LENGTH_SHORT).show()
+        prefs.edit().putBoolean("firstRun", false).apply()
         securityEnabled = prefs.getBoolean("securityEnabled", false)
 
 //        nav.navigate(R.id.loadingFragment)
@@ -64,7 +68,7 @@ class MainActivity : AppCompatActivity(), UIListener, PinListener{
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
             R.id.action_settings -> {
-                nav.navigate(R.id.action_passwordListFragment_to_settingsFragment)
+                nav.navigate(R.id.settingsFragment)
 //                val pinFragment = if (PinHelper.hasDefaultPinSaved(this))
 //                    PinSupportFragment.newInstanceForVerification()
 //                else
@@ -87,10 +91,6 @@ class MainActivity : AppCompatActivity(), UIListener, PinListener{
 
     override fun getRealmConfig(): RealmConfiguration {
         return realmConfig
-    }
-
-    override fun exit(){
-        finish()
     }
 
     override fun onPinCreated() {
