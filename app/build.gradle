@@ -37,10 +37,10 @@ android {
         targetCompatibility = 1.8
     }
     buildToolsVersion = '28.0.3'
-//}
 
     dependencies {
         def nav_version = "2.0.0"
+        def lifecycle_version = "2.0.0"
 
         implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
         implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
@@ -63,9 +63,9 @@ android {
         implementation 'androidx.biometric:biometric:1.0.0-alpha04'
         implementation 'androidx.preference:preference:1.1.0-rc01'
         implementation 'com.venmo.android.pin:library:1.2.0@aar'
-    }
-}
 
-dependencies {
-    implementation 'androidx.legacy:legacy-support-v4:+'
+        implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+        kapt "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+
+    }
 }

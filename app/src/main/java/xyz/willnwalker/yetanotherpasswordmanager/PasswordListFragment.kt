@@ -31,8 +31,6 @@ class PasswordListFragment : Fragment() {
     private lateinit var passwordListAdapter: PasswordListAdapter
     private lateinit var realm: Realm
 
-    // Kyle: initialize linearLayoutManager
-    private lateinit var linearLayoutManager: LinearLayoutManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -45,8 +43,6 @@ class PasswordListFragment : Fragment() {
         fab.setOnClickListener {
             findNavController(it).navigate(R.id.action_new_password)
         }
-
-        linearLayoutManager = LinearLayoutManager(activity)
 
         // Kyle: adds a horizontal line separator between each item
         passwordList.addItemDecoration(PasswordListItemDecoration(requireContext(), 40, 40))

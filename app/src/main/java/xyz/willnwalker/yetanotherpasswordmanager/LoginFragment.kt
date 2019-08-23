@@ -89,34 +89,6 @@ class LoginFragment : Fragment(){
                 showLaterMessage("")
             }
         }
-//        MaterialDialog.Builder(requireContext())
-//                .title("Welcome!")
-//                .content(R.string.setup_login_dialog_message)
-//                .positiveText("Yes")
-//                .onPositive { _, _ ->
-//                    val manager = FingerprintManagerCompat.from(requireContext())
-//                    when {
-//                        !manager.isHardwareDetected -> showLaterMessage("No Fingerprint reader detected. ")
-//                        !manager.hasEnrolledFingerprints() -> showLaterMessage("No Fingerprints saved in phone. ")
-//                        else -> {
-//                            val dialog = FingerprintDialog.newInstance(
-//                                    "Sign In",
-//                                    "Confirm fingerprint to enable security.",
-//                                    flow,
-//                                    nav
-//                            )
-//                            dialog.show(requireFragmentManager(), FingerprintDialog.FRAGMENT_TAG)
-//                        }
-//                    }
-//                }
-//                .negativeText("No")
-//                .onNegative{_, _ ->
-//                    prefs.edit().putBoolean("firstRun",false).apply()
-//                    prefs.edit().putBoolean("securityEnabled",false).apply()
-//                    uiListener.setRealmConfig(RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build())
-//                    showLaterMessage("")
-//                }
-//                .show()
     }
 
     private fun showAuthFlow() {
@@ -138,13 +110,6 @@ class LoginFragment : Fragment(){
                 nav.navigate(R.id.action_loginSetupFragment_to_passwordListFragment)
             }
         }
-//        MaterialDialog.Builder(requireContext())
-//                .content(extraMessage + getString(R.string.setup_login_dialog_message_negative))
-//                .positiveText("Okay")
-//                .onPositive{_, _ ->
-//                    nav.navigate(R.id.action_loginSetupFragment_to_passwordListFragment)
-//                }
-//                .show()
     }
 
 }

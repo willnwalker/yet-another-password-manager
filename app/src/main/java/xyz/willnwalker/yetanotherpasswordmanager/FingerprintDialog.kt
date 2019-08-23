@@ -233,7 +233,7 @@ class FingerprintDialog : DialogFragment(), FingerprintController.Callback {
                     title(text = "Failure!")
                     message(text = "Fingerprint authentication was not successful. Exiting.")
                     positiveButton(text = "Okay")
-                    onDismiss { uiListener.exit() }
+                    onDismiss { requireActivity().finish() }
                 }
 //                MaterialDialog.Builder(requireContext())
 //                        .title("Failure!")
