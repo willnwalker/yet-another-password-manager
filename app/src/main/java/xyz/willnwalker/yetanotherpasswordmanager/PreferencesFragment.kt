@@ -1,10 +1,8 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.Toast
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.snackbar.Snackbar
 
@@ -21,7 +19,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     }
 
     override fun onSharedPreferenceChanged(p0: SharedPreferences?, p1: String?) {
-        Snackbar.make(requireView().rootView, "$p1: ${p0!!.getBoolean(p1, false)}", Snackbar.LENGTH_LONG).show()
+        Snackbar.make(requireView(), "$p1: ${p0!!.getBoolean(p1, false)}", Snackbar.LENGTH_LONG).show()
         when(p1){
             "securityEnabled" ->{
 
