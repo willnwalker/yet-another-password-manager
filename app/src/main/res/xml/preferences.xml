@@ -9,5 +9,9 @@
         android:defaultValue="false"
         android:key="fingerprintEnabled"
         android:title="Use fingerprint instead of PIN to unlock passwords." />
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="firstRun"
+        android:title="First Run?" />
 
 </PreferenceScreen>

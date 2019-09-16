@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.preference.PreferenceManager
+import com.facebook.stetho.Stetho
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.activity_main.*
@@ -33,7 +35,8 @@ class MainActivity : AppCompatActivity(), UIListener, PinListener{
         // initialize Realm
         Realm.init(applicationContext)
         viewModel = ViewModelProviders.of(this)[SharedViewModel::class.java]
-        prefs = getPreferences(Context.MODE_PRIVATE)
+//        prefs = getPreferences(Context.MODE_PRIVATE)
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
         nav = Navigation.findNavController(this, R.id.nav_host)
         firstRun = prefs.getBoolean("firstRun", true)
         securityEnabled = prefs.getBoolean("securityEnabled", false)
@@ -45,7 +48,7 @@ class MainActivity : AppCompatActivity(), UIListener, PinListener{
 
         firstRun = prefs.getBoolean("firstRun", true)
         Toast.makeText(this, "firstRun: $firstRun", Toast.LENGTH_SHORT).show()
-        prefs.edit().putBoolean("firstRun", false).apply()
+//        prefs.edit().putBoolean("firstRun", false).apply()
         securityEnabled = prefs.getBoolean("securityEnabled", false)
 
 //        nav.navigate(R.id.loadingFragment)
