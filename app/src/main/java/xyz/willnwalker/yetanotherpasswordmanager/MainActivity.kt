@@ -32,8 +32,9 @@ class MainActivity : AppCompatActivity(), UIListener, PinListener{
         setSupportActionBar(toolbar)
         // initialize Realm
         Realm.init(applicationContext)
-        viewModel = ViewModelProviders.of(this)[SharedViewModel::class.java]
+//        viewModel = ViewModelProviders.of(this)[SharedViewModel::class.java]
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        viewModel = getViewModel{ SharedViewModel(prefs) }
         nav = Navigation.findNavController(this, R.id.nav_host)
         firstRun = prefs.getBoolean("firstRun", true)
         securityEnabled = prefs.getBoolean("securityEnabled", false)
