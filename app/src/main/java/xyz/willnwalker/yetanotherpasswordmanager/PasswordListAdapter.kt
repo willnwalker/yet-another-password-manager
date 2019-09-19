@@ -91,7 +91,7 @@ class PasswordListAdapter(
                 customView(R.layout.password_view_dialog)
                 positiveButton(text = "Edit"){
                     it.dismiss()
-                    val args = PasswordListFragmentDirections.actionNewPassword().setUuid(entry.id)
+                    val args = PasswordListFragmentDirections.actionNewPassword(entry.id)
                     findNavController(container).navigate(args)
                 }
                 negativeButton(text = "Delete"){
