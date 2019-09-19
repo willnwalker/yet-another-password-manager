@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.preference.PreferenceManager
@@ -30,9 +29,6 @@ class MainActivity : AppCompatActivity(), UIListener, PinListener{
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        // initialize Realm
-        Realm.init(applicationContext)
-//        viewModel = ViewModelProviders.of(this)[SharedViewModel::class.java]
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
         viewModel = getViewModel{ SharedViewModel(prefs) }
         nav = Navigation.findNavController(this, R.id.nav_host)
