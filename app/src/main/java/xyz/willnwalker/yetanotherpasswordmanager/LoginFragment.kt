@@ -9,11 +9,13 @@ import androidx.core.hardware.fingerprint.FingerprintManagerCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
+import com.venmo.android.pin.PinListener
 import io.realm.RealmConfiguration
 
 
@@ -21,11 +23,22 @@ import io.realm.RealmConfiguration
  * A simple [Fragment] subclass.
  *
  */
-class LoginFragment : Fragment(){
+class LoginFragment : Fragment(), PinListener{
 
     private lateinit var uiListener: UIListener
     private lateinit var prefs: SharedPreferences
     private lateinit var nav: NavController
+
+    //                val pinFragment = if (PinHelper.hasDefaultPinSaved(this))
+//                    PinSupportFragment.newInstanceForVerification()
+//                else
+//                    PinSupportFragment.newInstanceForCreation()
+//
+//                supportFragmentManager.beginTransaction()
+////                        .remove(nav_host)
+//                        .replace(R.id.nav_host, pinFragment)
+//                        .addToBackStack(null)
+//                        .commit()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -110,6 +123,15 @@ class LoginFragment : Fragment(){
                 nav.navigate(R.id.action_loginSetupFragment_to_passwordListFragment)
             }
         }
+    }
+
+    override fun onPinCreated() {
+        nav.navigateUp()
+    }
+
+    override fun onValidated() {
+        Toast.makeText(requireActivity(),"Correct PIN!", Toast.LENGTH_SHORT).show()
+        nav.navigateUp()
     }
 
 }

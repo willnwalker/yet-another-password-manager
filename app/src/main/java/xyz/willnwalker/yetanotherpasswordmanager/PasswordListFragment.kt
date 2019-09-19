@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.kotlin.where
@@ -50,7 +51,6 @@ class PasswordListFragment : Fragment() {
         val entries = realm.where<Entry>().findAllAsync()
         passwordListAdapter = PasswordListAdapter(realmConfig, requireContext(), viewLifecycleOwner, entries, true, false, "")
         passwordList.setAdapter(passwordListAdapter)
-
     }
 
     // Need this because context doesn't exist until fragment attached to navigation controller
@@ -87,5 +87,4 @@ class PasswordListFragment : Fragment() {
         passwordListAdapter.onResume()
         realm = Realm.getInstance(realmConfig)
     }
-
 }

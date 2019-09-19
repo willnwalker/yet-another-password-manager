@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/passwordListFragment">
+    app:startDestination="@id/loadingFragment">
 
     <fragment
         android:id="@+id/passwordListFragment"
@@ -53,6 +53,14 @@
         android:name="xyz.willnwalker.yetanotherpasswordmanager.LoadingFragment"
         android:label="loadingFragment"
         tools:layout="@layout/fragment_loading">
+        <action
+            android:id="@+id/action_loadingFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_loadingFragment_to_passwordListFragment"
+            app:destination="@id/passwordListFragment"
+            app:popUpTo="@+id/mobile_navigation"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
