@@ -1,44 +1,37 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
+import android.util.Log
 import androidx.fragment.app.Fragment
-import androidx.core.hardware.fingerprint.FingerprintManagerCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.biometric.BiometricPrompt
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.preference.Preference
+import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
-import com.venmo.android.pin.PinListener
-import io.realm.RealmConfiguration
+import com.google.android.material.snackbar.Snackbar
+import com.venmo.android.pin.PinSupportFragment
+import com.venmo.android.pin.util.PinHelper
+import java.util.concurrent.Executors
 
 
 /**
  * A simple [Fragment] subclass.
  *
  */
-class LoginFragment : Fragment(), PinListener{
+class LoginFragment : Fragment(){
 
-    private lateinit var uiListener: UIListener
-    private lateinit var prefs: SharedPreferences
     private lateinit var nav: NavController
+    private lateinit var viewModel: SharedViewModel
 
-    //                val pinFragment = if (PinHelper.hasDefaultPinSaved(this))
-//                    PinSupportFragment.newInstanceForVerification()
-//                else
-//                    PinSupportFragment.newInstanceForCreation()
-//
-//                supportFragmentManager.beginTransaction()
-////                        .remove(nav_host)
-//                        .replace(R.id.nav_host, pinFragment)
-//                        .addToBackStack(null)
-//                        .commit()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -48,90 +41,99 @@ class LoginFragment : Fragment(), PinListener{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+
+        Log.i("xyz.willnwalker.yapm","LoginFragment created.")
+
+        val prefs = PreferenceManager.getDefaultSharedPreferences(requireActivity())
+        viewModel = requireActivity().getViewModel { SharedViewModel(prefs) }
         nav = findNavController()
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val firstRun = prefs.getBoolean("firstRun", true)
-        val securityEnabled = prefs.getBoolean("securityEnabled", false)
-
-        when{
-            firstRun -> showSetupFlow("setup")
-            securityEnabled -> showAuthFlow()
-            !firstRun && !securityEnabled -> {
-                showSetupFlow("migrate")
+        viewModel.pinCreated.observe(viewLifecycleOwner, Observer { pinCreated ->
+            if(pinCreated){
+                Log.i("xyz.willnwalker.yapm","pinCreated is true")
+                viewModel.pinCreated.value = false
+                nav.navigateUp()
             }
-        }
-
-    }
-
-    // Need this because context doesn't exist until fragment attached to navigation controller
-    override fun onAttach(context: Context){
-        super.onAttach(context)
-        uiListener = requireContext() as UIListener
-    }
-
-    private fun showSetupFlow(flow: String){
-        MaterialDialog(requireContext()).show {
-            lifecycleOwner(viewLifecycleOwner)
-            title(text = "Welcome!")
-            message(R.string.setup_login_dialog_message)
-            positiveButton(text = "Yes"){
-                val manager = FingerprintManagerCompat.from(requireContext())
-                when {
-                    !manager.isHardwareDetected -> showLaterMessage("No Fingerprint reader detected. ")
-                    !manager.hasEnrolledFingerprints() -> showLaterMessage("No Fingerprints saved in phone. ")
-                    else -> {
-                        val dialog = FingerprintDialog.newInstance(
-                                "Sign In",
-                                "Confirm fingerprint to enable security.",
-                                flow,
-                                nav
-                        )
-                        dialog.show(requireFragmentManager(), FingerprintDialog.FRAGMENT_TAG)
-                    }
+        })
+        viewModel.pinValidated.observe(viewLifecycleOwner, Observer { pinValidated ->
+            if(pinValidated){
+                Log.i("xyz.willnwalker.yapm","pinValidated is true")
+                Toast.makeText(requireActivity(),"Correct PIN!", Toast.LENGTH_SHORT).show()
+                viewModel.pinValidated.value = false
+                if(viewModel.resumedLogin.value!!){
+                    viewModel.resumedLogin.value = false
+                    nav.navigateUp()
+                }
+                else{
+                    nav.navigate(R.id.action_loginSetupFragment_to_passwordListFragment)
                 }
             }
-            negativeButton(text = "No"){
-                prefs.edit().putBoolean("firstRun",false).apply()
-                prefs.edit().putBoolean("securityEnabled",false).apply()
-                uiListener.setRealmConfig(RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build())
-                showLaterMessage("")
-            }
+        })
+        if(prefs.getBoolean("fingerprintEnabled", false)){
+            showFingerprintAuthFlow(prefs)
+        }
+        else{
+            showPinFragment()
         }
     }
 
-    private fun showAuthFlow() {
-        val dialog = FingerprintDialog.newInstance(
-                "Sign In",
-                "Confirm fingerprint to continue.",
-                "auth",
-                nav
-        )
-        dialog.show(requireFragmentManager(), FingerprintDialog.FRAGMENT_TAG)
-    }
+    private fun showFingerprintAuthFlow(prefs: SharedPreferences) {
+        val executor = Executors.newSingleThreadExecutor()
+        val callback = object: BiometricPrompt.AuthenticationCallback() {
+            fun disableFingerprint(){
+                prefs.edit().putBoolean("fingerprintEnabled",false).apply()
+            }
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                super.onAuthenticationError(errorCode, errString)
 
-    private fun showLaterMessage(extraMessage : String){
-        MaterialDialog(requireContext()).show {
-            lifecycleOwner(viewLifecycleOwner)
-            message(text = "$extraMessage You can always secure your passwords later. Just go to ...")
-            positiveButton(text = "Okay")
-            onDismiss {
+                if(errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON){
+                    Snackbar.make(requireView(), "Authentication unsuccessful.", Snackbar.LENGTH_LONG)
+                            .show()
+                }
+                disableFingerprint()
+                showPinFragment()
+            }
+
+            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                super.onAuthenticationSucceeded(result)
+                Snackbar.make(requireView(), "Fingerprint authentication successful.", Snackbar.LENGTH_LONG)
+                        .show()
                 nav.navigate(R.id.action_loginSetupFragment_to_passwordListFragment)
             }
+
+            override fun onAuthenticationFailed() {
+                super.onAuthenticationFailed()
+                showPinFragment()
+            }
         }
+        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Fingerprint Login")
+                .setSubtitle("Authenticate to access your saved passwords.")
+                .setDescription("Click cancel to use your backup PIN.")
+                .setNegativeButtonText("Cancel")
+                .build()
+        val biometricPrompt = BiometricPrompt(this, executor, callback)
+        biometricPrompt.authenticate(promptInfo)
     }
 
-    override fun onPinCreated() {
-        nav.navigateUp()
+    private fun showPinFragment(){
+        val pinFragment = if (PinHelper.hasDefaultPinSaved(requireActivity()))
+            PinSupportFragment.newInstanceForVerification()
+        else
+            PinSupportFragment.newInstanceForCreation()
+        requireFragmentManager().beginTransaction()
+                .replace(R.id.blankFragment, pinFragment)
+                .addToBackStack(null)
+                .commit()
     }
 
-    override fun onValidated() {
-        Toast.makeText(requireActivity(),"Correct PIN!", Toast.LENGTH_SHORT).show()
-        nav.navigateUp()
-    }
-
+//    private fun showLaterMessage(extraMessage : String){
+//        MaterialDialog(requireContext()).show {
+//            lifecycleOwner(viewLifecycleOwner)
+//            message(text = "$extraMessage You can always secure your passwords later. Just go to ...")
+//            positiveButton(text = "Okay")
+//            onDismiss {
+//                nav.navigate(R.id.action_loginSetupFragment_to_passwordListFragment)
+//            }
+//        }
+//    }
 }

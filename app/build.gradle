@@ -67,8 +67,8 @@ android {
         implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
         kapt "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
+        implementation 'com.github.tntkhang:realm-encryption-helper:1.0.2'
+
         debugImplementation "com.facebook.stetho:stetho:1.5.1"
-
-
     }
 }

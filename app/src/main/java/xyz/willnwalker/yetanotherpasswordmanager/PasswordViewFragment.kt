@@ -1,6 +1,5 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.text.InputType
@@ -10,8 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.Navigation.findNavController
+import androidx.preference.PreferenceManager
 import io.realm.Realm
-import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.fragment_password_view.*
 import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
@@ -26,8 +25,7 @@ import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
  *
  */
 class PasswordViewFragment : Fragment() {
-    private lateinit var uiListener: UIListener
-    private lateinit var realmConfig: RealmConfiguration
+    private lateinit var viewModel: SharedViewModel
     private lateinit var realm : Realm
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +36,12 @@ class PasswordViewFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        realm = Realm.getInstance(realmConfig)
+
+        val prefs = PreferenceManager.getDefaultSharedPreferences(requireActivity())
+        viewModel = requireActivity().getViewModel { SharedViewModel(prefs) }
+
+//        realm = Realm.getInstance(viewModel.realmConfig!!)
+        realm = Realm.getDefaultInstance()
         val uuid = PasswordViewFragmentArgs.fromBundle(arguments!!).uuid
 
         if(isNewPassword(uuid)){
@@ -181,13 +184,6 @@ class PasswordViewFragment : Fragment() {
             toast.show()
             false
         }
-    }
-
-    // Need this because context doesn't exist until fragment attached to navigation controller
-    override fun onAttach(context: Context){
-        super.onAttach(context)
-        uiListener = requireContext() as UIListener
-        realmConfig = uiListener.getRealmConfig()
     }
 
     private fun isValidURL(url: String): Boolean {

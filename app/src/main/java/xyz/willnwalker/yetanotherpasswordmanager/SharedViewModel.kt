@@ -2,9 +2,9 @@ package xyz.willnwalker.yetanotherpasswordmanager
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import io.realm.RealmConfiguration
 
 
 class BaseViewModelFactory<T>(val creator: () -> T) : ViewModelProvider.Factory {
@@ -38,8 +38,12 @@ class LiveSharedPreferences(private val prefs: SharedPreferences, private val re
 
 class SharedViewModel(prefs: SharedPreferences): ViewModel(){
 
-    var realmConfig: RealmConfiguration? = null
     val firstRun = LiveSharedPreferences(prefs, "firstRun", true)
     val securityEnabled = LiveSharedPreferences(prefs, "securityEnabled", false)
+    val fingerprintEnabled = LiveSharedPreferences(prefs, "fingerprintEnabled", false)
+
+    val pinCreated = MutableLiveData<Boolean>(false)
+    val pinValidated = MutableLiveData<Boolean>(false)
+    val resumedLogin = MutableLiveData<Boolean>(false)
 
 }
