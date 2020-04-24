@@ -42,21 +42,21 @@ class LoginFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.i("xyz.willnwalker.yapm","LoginFragment created.")
+        Log.d("xyz.willnwalker.yapm","LoginFragment created.")
 
         val prefs = PreferenceManager.getDefaultSharedPreferences(requireActivity())
         viewModel = requireActivity().getViewModel { SharedViewModel(prefs) }
         nav = findNavController()
         viewModel.pinCreated.observe(viewLifecycleOwner, Observer { pinCreated ->
             if(pinCreated){
-                Log.i("xyz.willnwalker.yapm","pinCreated is true")
+                Log.d("xyz.willnwalker.yapm","pinCreated is true")
                 viewModel.pinCreated.value = false
                 nav.navigateUp()
             }
         })
         viewModel.pinValidated.observe(viewLifecycleOwner, Observer { pinValidated ->
             if(pinValidated){
-                Log.i("xyz.willnwalker.yapm","pinValidated is true")
+                Log.d("xyz.willnwalker.yapm","pinValidated is true")
                 Toast.makeText(requireActivity(),"Correct PIN!", Toast.LENGTH_SHORT).show()
                 viewModel.pinValidated.value = false
                 if(viewModel.resumedLogin.value!!){
