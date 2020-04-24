@@ -5,11 +5,13 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.view.View
+import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import androidx.preference.SwitchPreference
 import com.google.android.material.snackbar.Snackbar
 import com.venmo.android.pin.util.PinHelper
 import java.util.concurrent.Executors
@@ -87,6 +89,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         nav = findNavController()
+        if(BiometricManager.from(requireActivity()).canAuthenticate() == BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE){
+            preferenceScreen.findPreference<SwitchPreference>("fingerprintEnabled")!!.isEnabled = false
+        }
     }
 
     override fun onResume() {
