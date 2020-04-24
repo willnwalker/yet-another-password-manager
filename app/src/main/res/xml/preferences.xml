@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="securityEnabled"
+        android:title="Enable Encryption with PIN" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="fingerprintEnabled"
+        android:title="Use fingerprint instead of PIN to unlock passwords." />
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="firstRun"
+        android:title="First Run?" />
+
+</PreferenceScreen>

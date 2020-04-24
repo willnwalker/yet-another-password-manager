@@ -3,14 +3,14 @@ package xyz.willnwalker.yetanotherpasswordmanager
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
+import androidx.fragment.app.Fragment
 import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.preference.PreferenceManager
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.kotlin.where
@@ -23,17 +23,14 @@ import kotlinx.android.synthetic.main.fragment_password_list.*
  */
 class PasswordListFragment : Fragment() {
 
-    private lateinit var contextConfirmed : Context
     private lateinit var prefs: SharedPreferences
+    private lateinit var viewModel: SharedViewModel
     private var firstRun = true
     private var securityEnabled = false
-    private lateinit var uiListener: UIListener
     private lateinit var realmConfig: RealmConfiguration
     private lateinit var passwordListAdapter: PasswordListAdapter
     private lateinit var realm: Realm
 
-    // Kyle: initialize linearLayoutManager
-    private lateinit var linearLayoutManager: LinearLayoutManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -47,39 +44,42 @@ class PasswordListFragment : Fragment() {
             findNavController(it).navigate(R.id.action_new_password)
         }
 
-        linearLayoutManager = LinearLayoutManager(activity)
-
         // Kyle: adds a horizontal line separator between each item
-        passwordList.addItemDecoration(PasswordListItemDecoration(contextConfirmed, 40, 40))
+        passwordList.addItemDecoration(PasswordListItemDecoration(requireContext(), 40, 40))
 
-        realm = Realm.getInstance(realmConfig)
+//        realm = Realm.getInstance(realmConfig)
+        realm = Realm.getDefaultInstance()
         val entries = realm.where<Entry>().findAllAsync()
-        passwordListAdapter = PasswordListAdapter(realmConfig, contextConfirmed, entries, true, false, "")
+        passwordListAdapter = PasswordListAdapter(Realm.getDefaultConfiguration()!!, requireContext(), viewLifecycleOwner, entries, true, false, "")
         passwordList.setAdapter(passwordListAdapter)
-
     }
 
     // Need this because context doesn't exist until fragment attached to navigation controller
-    override fun onAttach(_context: Context){
+    override fun onAttach(context: Context){
         super.onAttach(context)
-        contextConfirmed = _context
-        uiListener = context as UIListener
-        prefs = PreferenceManager.getDefaultSharedPreferences(contextConfirmed)
+        prefs = PreferenceManager.getDefaultSharedPreferences(requireActivity())
+        viewModel = requireActivity().getViewModel { SharedViewModel(prefs) }
         firstRun = prefs.getBoolean("firstRun", true)
         securityEnabled = prefs.getBoolean("securityEnabled", false)
-        when{
-            !securityEnabled -> {
-                realmConfig = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build()
-                uiListener.setRealmConfig(realmConfig)
-            }
-            else -> {
-                val realmKey = Base64.decode(prefs.getString("RealmKey",""), Base64.NO_WRAP)
-                realmConfig = RealmConfiguration.Builder().encryptionKey(realmKey).deleteRealmIfMigrationNeeded().build()
-                uiListener.setRealmConfig(realmConfig)
+//        when{
+//            !securityEnabled -> {
+////                realmConfig = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build()
+//            }
+//            else -> {
+////                val realmKey = Base64.decode(prefs.getString("RealmKey",""), Base64.NO_WRAP)
+////                realmConfig = RealmConfiguration.Builder().encryptionKey(realmKey).deleteRealmIfMigrationNeeded().build()
+//                realmConfig = Realm.getDefaultConfiguration()!!
+//                viewModel.realmConfig = realmConfig
+//            }
+//        }
+//        this.realmConfig = viewModel.realmConfig!!
+    }
 
-            }
-        }
-        this.realmConfig = uiListener.getRealmConfig()
+    override fun onResume() {
+        super.onResume()
+        passwordListAdapter.onResume()
+        fragment_password_list.visibility = View.VISIBLE
+        realm = Realm.getDefaultInstance()
     }
 
     override fun onPause() {
@@ -88,11 +88,4 @@ class PasswordListFragment : Fragment() {
         fragment_password_list.visibility = View.INVISIBLE
         realm.close()
     }
-
-    override fun onResume() {
-        super.onResume()
-        passwordListAdapter.onResume()
-        realm = Realm.getInstance(realmConfig)
-    }
-
 }

@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="?android:attr/selectableItemBackground"
+    android:foreground="?attr/selectableItemBackground"
     xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
@@ -16,7 +16,7 @@
         android:paddingTop="@dimen/spacing_large"
         android:paddingBottom="@dimen/spacing_large"
         android:textSize="24sp"
-        android:divider="?android:dividerHorizontal"
+        android:divider="?attr/dividerHorizontal"
         android:showDividers="middle"
         tools:text="Hero text"
         />

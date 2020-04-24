@@ -1,25 +1,23 @@
 package xyz.willnwalker.yetanotherpasswordmanager
 
-import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.text.InputType
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.navigation.Navigation.findNavController
+import androidx.preference.PreferenceManager
 import io.realm.Realm
-import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.fragment_password_view.*
 import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.kotlin.where
-import android.graphics.drawable.Drawable
-import android.support.v4.content.res.ResourcesCompat
+import com.afollestad.materialdialogs.input.input
+import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 
 
 /**
@@ -27,9 +25,7 @@ import android.support.v4.content.res.ResourcesCompat
  *
  */
 class PasswordViewFragment : Fragment() {
-    private lateinit var contextConfirmed : Context
-    private lateinit var uiListener: UIListener
-    private lateinit var realmConfig: RealmConfiguration
+    private lateinit var viewModel: SharedViewModel
     private lateinit var realm : Realm
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -40,8 +36,13 @@ class PasswordViewFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        realm = Realm.getInstance(realmConfig)
-        val uuid = PasswordViewFragmentArgs.fromBundle(arguments).uuid
+
+        val prefs = PreferenceManager.getDefaultSharedPreferences(requireActivity())
+        viewModel = requireActivity().getViewModel { SharedViewModel(prefs) }
+
+//        realm = Realm.getInstance(viewModel.realmConfig!!)
+        realm = Realm.getDefaultInstance()
+        val uuid = PasswordViewFragmentArgs.fromBundle(arguments!!).uuid
 
         if(isNewPassword(uuid)){
             val entry = Entry()
@@ -62,20 +63,36 @@ class PasswordViewFragment : Fragment() {
         }
 
         button_genpassword.setOnClickListener{
-            MaterialDialog.Builder(contextConfirmed)
-                    .title("Generate Password")
-                    .content("Specify password length:")
-                    .inputType(InputType.TYPE_CLASS_NUMBER)
-                    .inputRange(1,2)
-                    .input(null, "12") { dialog: MaterialDialog, input: CharSequence  ->
-                        var pass = genPassword(input.toString().toInt(), dialog.isPromptCheckBoxChecked)
-                        passwordTextField.setText(pass)
-                        passwordTextField2.setText(pass)
-                    }
-                    .positiveText("Generate")
-                    .negativeText("Cancel")
-                    .checkBoxPrompt("Allow Special Characters?", true, null)
-                    .show()
+            MaterialDialog(requireContext()).show {
+                lifecycleOwner(viewLifecycleOwner)
+                input(
+                        allowEmpty = false,
+                        inputType = InputType.TYPE_CLASS_NUMBER,
+                        maxLength = 2
+                ){ _, text ->
+                    val pass = genPassword(text.toString().toInt(), false)
+                    passwordTextField.setText(pass)
+                    passwordTextField2.setText(pass)
+                }
+                title(text = "Generate Password")
+                message(text = "Specify password length:")
+                positiveButton(text = "Generate")
+                negativeButton(text = "Cancel")
+            }
+//            MaterialDialog.Builder(contextConfirmed)
+//                    .title("Generate Password")
+//                    .content("Specify password length:")
+//                    .inputType(InputType.TYPE_CLASS_NUMBER)
+//                    .inputRange(1,2)
+//                    .input(null, "12") { dialog: MaterialDialog, input: CharSequence  ->
+//                        var pass = genPassword(input.toString().toInt(), dialog.isPromptCheckBoxChecked)
+//                        passwordTextField.setText(pass)
+//                        passwordTextField2.setText(pass)
+//                    }
+//                    .positiveText("Generate")
+//                    .negativeText("Cancel")
+//                    .checkBoxPrompt("Allow Special Characters?", true, null)
+//                    .show()
         }
     }
 
@@ -163,18 +180,10 @@ class PasswordViewFragment : Fragment() {
         return if(content == "")
             true
         else {
-            val toast = Toast.makeText(contextConfirmed, content, Toast.LENGTH_SHORT)
+            val toast = Toast.makeText(requireContext(), content, Toast.LENGTH_SHORT)
             toast.show()
             false
         }
-    }
-
-    // Need this because context doesn't exist until fragment attached to navigation controller
-    override fun onAttach(_context: Context){
-        super.onAttach(_context)
-        contextConfirmed = _context
-        uiListener = contextConfirmed as UIListener
-        realmConfig = uiListener.getRealmConfig()
     }
 
     private fun isValidURL(url: String): Boolean {
