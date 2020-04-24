@@ -27,7 +27,6 @@ class PasswordListFragment : Fragment() {
     private lateinit var viewModel: SharedViewModel
     private var firstRun = true
     private var securityEnabled = false
-    private lateinit var realmConfig: RealmConfiguration
     private lateinit var passwordListAdapter: PasswordListAdapter
     private lateinit var realm: Realm
 
@@ -61,18 +60,6 @@ class PasswordListFragment : Fragment() {
         viewModel = requireActivity().getViewModel { SharedViewModel(prefs) }
         firstRun = prefs.getBoolean("firstRun", true)
         securityEnabled = prefs.getBoolean("securityEnabled", false)
-//        when{
-//            !securityEnabled -> {
-////                realmConfig = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build()
-//            }
-//            else -> {
-////                val realmKey = Base64.decode(prefs.getString("RealmKey",""), Base64.NO_WRAP)
-////                realmConfig = RealmConfiguration.Builder().encryptionKey(realmKey).deleteRealmIfMigrationNeeded().build()
-//                realmConfig = Realm.getDefaultConfiguration()!!
-//                viewModel.realmConfig = realmConfig
-//            }
-//        }
-//        this.realmConfig = viewModel.realmConfig!!
     }
 
     override fun onResume() {
