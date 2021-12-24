@@ -119,20 +119,19 @@ class PasswordViewFragment : Fragment() {
     }
 
     private fun genPassword(length: Int, specialChars: Boolean): String {
-        val range: Int
         var pass = ""
         //Set the range of ascii values depending on special character allowance
-        when (specialChars) {
-            true -> range = 94
-            false -> range = 62
+        val range = when (specialChars) {
+            true -> 94
+            false -> 62
         }
         for (i in 0 until length) {
             try {
                 val secRand = SecureRandom.getInstance("SHA1PRNG") //Most secure windows algorithm
-                if (specialChars)
-                    pass += (secRand.nextInt(range) + 33).toChar()
+                pass += if (specialChars)
+                    (secRand.nextInt(range) + 33).toChar()
                 else
-                    pass += genCharacter(secRand.nextInt(range))
+                    genCharacter(secRand.nextInt(range))
             } catch (e: NoSuchAlgorithmException) {
                 //Implement some type of "Try again" pop-up message
             }

@@ -183,9 +183,9 @@ class PasswordListAdapter(
     }
 
     fun onPause(){
-        if(lastDialogAvailable){
-            lastDialog.dismiss()
-        }
+//        if(lastDialogAvailable){
+//            lastDialog.dismiss()
+//        }
         realm.close()
     }
 

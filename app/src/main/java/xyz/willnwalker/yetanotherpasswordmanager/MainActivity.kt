@@ -36,8 +36,13 @@ class MainActivity : AppCompatActivity(), PinListener{
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         viewModel = getViewModel { SharedViewModel(prefs) }
 
-        nav = findNavController(this, R.id.nav_host)
+//        nav = findNavController(this, R.id.nav_host)
 
+    }
+
+    override fun onResume() {
+        nav = findNavController(this, R.id.nav_host)
+        super.onResume()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -52,6 +57,7 @@ class MainActivity : AppCompatActivity(), PinListener{
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> {
+                toolbar.title = "Settings"
                 nav.navigate(R.id.settingsFragment)
                 true
             }
