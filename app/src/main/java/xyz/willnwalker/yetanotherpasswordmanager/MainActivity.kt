@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity(), PinListener{
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> {
-                toolbar.title = "Settings"
                 nav.navigate(R.id.settingsFragment)
                 true
             }

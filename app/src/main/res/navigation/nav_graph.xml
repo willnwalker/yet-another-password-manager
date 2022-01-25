@@ -8,15 +8,15 @@
     <fragment
         android:id="@+id/passwordListFragment"
         android:name="xyz.willnwalker.yetanotherpasswordmanager.PasswordListFragment"
-        android:label="fragment_password_list"
-        tools:layout="@layout/fragment_password_list" >
+        android:label="@string/passwordListFragment_title"
+        tools:layout="@layout/fragment_password_list">
         <action
             android:id="@+id/action_new_password"
             app:destination="@id/passwordViewFragment"
             app:enterAnim="@anim/nav_default_pop_enter_anim"
             app:exitAnim="@anim/nav_default_pop_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" >
+            app:popExitAnim="@anim/nav_default_pop_exit_anim">
             <argument
                 android:name="uuid"
                 android:defaultValue="new_password" />
@@ -67,7 +67,7 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="xyz.willnwalker.yetanotherpasswordmanager.SettingsFragment"
-        android:label="SettingsFragment" >
+        android:label="@string/settingsFragment_title">
         <action
             android:id="@+id/action_settingsFragment_to_loginFragment"
             app:destination="@id/loginFragment" />

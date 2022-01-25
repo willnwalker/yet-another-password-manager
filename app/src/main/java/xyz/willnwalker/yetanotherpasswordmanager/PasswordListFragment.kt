@@ -49,7 +49,7 @@ class PasswordListFragment : Fragment() {
 //        realm = Realm.getInstance(realmConfig)
         realm = Realm.getDefaultInstance()
         val entries = realm.where<Entry>().findAllAsync()
-        passwordListAdapter = PasswordListAdapter(Realm.getDefaultConfiguration()!!, requireContext(), viewLifecycleOwner, entries, true, false, "")
+        passwordListAdapter = PasswordListAdapter(Realm.getDefaultConfiguration()!!, requireContext(), viewLifecycleOwner, entries, automaticUpdate = true, animateIdType = false, animateExtraColumnName = "")
         passwordList.setAdapter(passwordListAdapter)
     }
 
